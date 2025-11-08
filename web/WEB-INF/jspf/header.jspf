@@ -1,8 +1,33 @@
+
 <header>
-    <h1>Sistema Innovador</h1>
-    <div class="opciones">
-        <a href="index.jsp" class="btn btn-primary" role="button" aria-disabled="true"><i class="bi bi-houses-fill"></i>&nbsp;Inicio</a>
-        <a href="login.jsp" class="btn btn-primary" role="button" aria-disabled="true"><i class="bi bi-box-arrow-in-right"></i>&nbsp;Login</a>
-        <a href="register.jsp" class="btn btn-primary" role="button" aria-disabled="true"><i class="bi bi-pencil-square"></i>&nbsp;Registro</a>
+    
+    <div class="top-bar">
+        <div class="contacto">
+            <span class="cont-phone"><i class="fa-solid fa-phone"></i>(01) 2253025</span>
+            <span><i class="fa-brands fa-whatsapp"></i> 981 - 124 - 146</span>
+        </div>
     </div>
+    
+    
+    <div class="logo">
+        <img src="RESOURCES/imgs/Logo.png" alt="alt"/>
+        <h1 >Multident</h1>
+    </div>
+
+    <button class="menu-hmb">Menu</button>
+
+    <div>
+        <nav class="naveg">
+            <ul class="nav-list">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#cita">Cita</a></li>
+                <li><a href="#sede">Sede</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <button type="submit" class="button">Contacto</button>
+
 </header>

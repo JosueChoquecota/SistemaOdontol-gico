@@ -1,0 +1,164 @@
+
+.top-bar{
+    top: 0;
+    left: 0;
+    width: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.contacto span{
+    margin-right: 28px;
+    padding-top: 5px;
+}
+
+.contacto{
+    display: flex;
+    gap: 25px;
+}
+
+.contacto i{
+    
+    margin-right: 10px;
+    
+}
+
+header{
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--color5);
+    align-items: center;
+    padding: 32px 25px;
+}
+
+main h1{
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    color: var(--color2);
+    margin-bottom: 10px;
+}
+
+main p{
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+}
+
+.contenedor{
+    max-width: 75%;
+    margin: 0 auto;
+}
+
+.espaciado{
+
+    padding-top: 50px;
+    padding-bottom: 60px;
+
+}
+
+.menu-hmb{
+
+    display: none;
+
+}
+
+.naveg{
+    display: flex;
+    gap: 51px;
+}
+
+.nav-list{
+
+    list-style-type: none;
+    display: flex;
+    gap: 51px;
+
+}
+
+.nav-list li a {
+
+    text-decoration: none;
+    color: black;
+}
+
+.logo{
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+}
+
+.logo h1{
+
+    font-size: 24px;
+    padding-top: 8px;
+}
+
+.button{
+    padding: 5px 22px;
+    color: var(--color5);
+    background-color: var(--color2);
+    border-radius: 10px;
+    border:1px solid var(--color2);
+}
+
+.button-cita{
+
+    border-radius: 10px;
+    padding: 5px 72px;
+    border: 2px solid var(--color2);
+    color: white;
+    background-color: transparent;
+    margin-left: 10px;
+}
+
+.wrap{
+
+    margin-top: 96px;
+    width: 100%;
+    height: 530px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    background: url(../imgs/img3.png) no-repeat center center;
+    background-size:cover;
+    background-position: center;
+
+}
+
+.wrap wrap-text{
+
+    display: flex;
+}
+.wrap-text{
+
+    padding-left: 110px;
+}
+
+.wrap-text h1{
+    color: var(--color5);
+    text-align: justify;
+    padding-bottom: 30px;
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.wrap-text p{
+    color: var(--color5);
+    font-size: 14px;
+    padding: 0;
+    text-align: justify;
+    padding-bottom: 37px;
+}
+
+
+
+
