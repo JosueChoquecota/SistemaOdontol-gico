@@ -8,8 +8,55 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>JSP Page</title>
         <%@include  file="WEB-INF/jspf/styles.jspf" %>
+        <link rel="stylesheet" href="RESOURCES/css/login.css"/>
     </head>
     <body>
+
+        <section class="login-section" >
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-3">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="login-form">
+                                    <h2 class="login-title">Login</h2>
+                                    <p class="card-comt">Necesitas cuenta verificada para acceder</p>
+                                    <hr>
+                                    <form action="UsuarioController.do" method="POST">
+                                        <input type="hidden" name="operacion" value="login"/>
+
+                                        <div class="mb-3">
+                                            <label for="correo" class="form-label">Correo</label>
+                                            <input type="text" class="form-control" name="correo" id="correo"  placeholder="Ingresa tu Correo Electronico">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="clave" class="form-label">Contraseña</label>
+                                            <input type="password" class="form-control" id="clave" name="clave" placeholder="******************">
+                                        </div>
+                                        <p class="forgot">Olvidaste tu contraseña?</p>
+
+                                        
+                                        <div class="btns">
+                                            <label class="recordar"> <input type="checkbox" id="recordar">Recordar</label>
+                                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                                <div class="imglogin">
+                                    <img  src="RESOURCES/imgs/imglogin.png">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
         <!-- Header -->
         <%@include  file="WEB-INF/jspf/header.jspf" %>
         <%@include  file="WEB-INF/jspf/navbar.jspf" %>
