@@ -12,16 +12,19 @@ import java.time.LocalDate;
  * @author ASUS
  */
 public class Trabajador {
-    private final Integer idTrabajador;
-    private final Usuario usuario;
+    private  Integer idTrabajador;
+    private  Usuario usuario;
     private Contacto contacto;
-    private final TipoDocumento tipoDocumento;
-    private final String nombre;
-    private final String apellido;
+    private  TipoDocumento tipoDocumento;
+    private  String nombre;
+    private  String apellido;
     private Rol rol;
-    private final String colegiatura;
+    private  String colegiatura;
     private Especialidad especialidad;
-    private final LocalDate fechaRegistro;
+    private  LocalDate fechaRegistro;
+
+    public Trabajador() {
+    }
 
     public Trabajador(Integer idTrabajador, Usuario usuario, Contacto contacto, TipoDocumento tipoDocumento, String nombre, String apellido, Rol rol, String colegiatura, Especialidad especialidad, LocalDate fechaRegistro) {
         this.idTrabajador = idTrabajador;
@@ -86,6 +89,34 @@ public class Trabajador {
 
     public void setEspecialidad(Especialidad especialidad) {
         this.especialidad = especialidad;
+    }
+
+    public void setIdTrabajador(Integer idTrabajador) {
+        this.idTrabajador = idTrabajador;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setTipoDocumento(TipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public void setColegiatura(String colegiatura) {
+        this.colegiatura = colegiatura;
+    }
+
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
   

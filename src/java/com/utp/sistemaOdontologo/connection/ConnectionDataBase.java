@@ -6,6 +6,7 @@ package com.utp.sistemaOdontologo.connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  *
@@ -19,17 +20,7 @@ public class ConnectionDataBase {
     private static final String USER = "db_abf869_dbsistemaodon_admin";
     private static final String PASS = "Sistema_2025";
 
-    private ConnectionDataBase() {
-
-        try {
-            Class.forName(DRIVER);
-            con = DriverManager.getConnection(URL, USER, PASS);
-            System.out.println("Conectado a la base de datos");
-
-        } catch (Exception e) {
-            System.out.println("Error al conectar :" + e.getMessage());
-            e.printStackTrace();
-        }
+    public ConnectionDataBase() {
     }
 
     public synchronized static ConnectionDataBase getInstance() {
@@ -40,13 +31,25 @@ public class ConnectionDataBase {
         return instance;
     }
 
-    public Connection getConnection() {
-        return con;
+    public Connection getConnection() throws SQLException {
+      try {
+            // Cargar el driver solo una vez (opcional en JDBC 4.0+)
+            Class.forName(DRIVER); 
+            // Crear y devolver la nueva conexión
+            Connection con = DriverManager.getConnection(URL, USER, PASS);
+            // System.out.println("Conexión abierta."); // Descomentar para debug
+            return con; 
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Driver JDBC no encontrado: " + e.getMessage());
+        }
     }
+
 
     public void close() {
         instance = null;
     }
+    
+    
     public static void main(String[] args) {
         ConnectionDataBase db = new ConnectionDataBase();
         

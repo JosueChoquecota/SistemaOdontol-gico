@@ -11,11 +11,15 @@ import com.utp.sistemaOdontologo.entities.enums.DiaSemana;
  * @author ASUS
  */
 public class HorarioOdontologo {
-    private final Integer idHorarioOdontologo;
-    private final Trabajador trabajador;
-    private final Horario horario;
-    private final DiaSemana diaSemanaa;
+    private  Integer idHorarioOdontologo;
+    private  Trabajador trabajador;
+    private  Horario horario;
+    private  DiaSemana diaSemanaa;
 
+    public HorarioOdontologo() {
+    }
+
+    
     public HorarioOdontologo(Integer idHorarioOdontologo, Trabajador trabajador, Horario horario, DiaSemana diaSemanaa) {
         this.idHorarioOdontologo = idHorarioOdontologo;
         this.trabajador = trabajador;

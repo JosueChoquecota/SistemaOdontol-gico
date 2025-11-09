@@ -7,15 +7,18 @@ package com.utp.sistemaOdontologo.entities;
 import java.time.LocalDate;
 
 public class Cita {
-    private final Integer idCita;
-    private final Paciente paciente;
-    private final Trabajador trabajador;
-    private final Horario horario;
+    private  Integer idCita;
+    private  Paciente paciente;
+    private  Trabajador trabajador;
+    private  Horario horario;
     private EstadoCita estado;
-    private final LocalDate fechaCita;
+    private  LocalDate fechaCita;
     private String motivo;
-    private final LocalDate fechaRegistro;
+    private  LocalDate fechaRegistro;
 
+    public Cita() {
+    }
+ 
     public Cita(Integer idCita, Paciente paciente, Trabajador trabajador, Horario horario, EstadoCita estado, LocalDate fechaCita, String motivo, LocalDate fechaRegistro) {
         this.idCita = idCita;
         this.paciente = paciente;

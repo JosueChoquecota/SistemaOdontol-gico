@@ -11,12 +11,17 @@ import java.time.LocalDate;
  * @author ASUS
  */
 public class HistorialCita {
-    private final Integer idHistorial;
-    private final Cita cita;
-    private final EstadoCita estado;
-    private final LocalDate fechaCambio;
-    private final String observacion;
+    private  Integer idHistorial;
+    private  Cita cita;
+    private  EstadoCita estado;
+    private  LocalDate fechaCambio;
+    private  String observacion;
 
+    public HistorialCita() {
+    }
+
+    
+    
     public HistorialCita(Integer idHistorial, Cita cita, EstadoCita estado, LocalDate fechaCambio, String observacion) {
         this.idHistorial = idHistorial;
         this.cita = cita;

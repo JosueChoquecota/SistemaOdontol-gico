@@ -13,13 +13,16 @@ import java.time.LocalDate;
  * @author ASUS
  */
 public class Pago {
-    private final Integer idPago;
-    private final Cita cita;
-    private final float monto;
-    private final MetodoPago metodo;
+    private  Integer idPago;
+    private  Cita cita;
+    private  float monto;
+    private  MetodoPago metodo;
     
     private EstadoPago estadoPago;
     private LocalDate fechaPago;
+
+    public Pago() {
+    }
 
     public Pago(Integer idPago, Cita cita, float monto, MetodoPago metodo, EstadoPago estadoPago, LocalDate fechaPago) {
         this.idPago = idPago;

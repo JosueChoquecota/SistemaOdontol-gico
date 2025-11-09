@@ -8,14 +8,23 @@
         <servlet-name>UsaurioController1</servlet-name>
         <servlet-class>com.utp.myapp.controllers.UsaurioController1</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TrabajadorCtrl</servlet-name>
+        <servlet-class>com.utp.sistemaOdontologico.controller.TrabajadorController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LoginCtrl</servlet-name>
+        <servlet-class>com.utp.sistemaOdontologo.controller.LoginController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UsuarioController</servlet-name>
         <url-pattern>/UsuarioController.do</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UsaurioController1</servlet-name>
-        <url-pattern>/UsaurioController1</url-pattern>
+        <servlet-name>LoginCtrl</servlet-name>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
+
     <session-config>
         <session-timeout>
             30

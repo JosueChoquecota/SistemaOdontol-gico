@@ -9,8 +9,11 @@ package com.utp.sistemaOdontologo.entities;
  * @author ASUS
  */
 public class EstadoCita {
-    private final Integer idEstado;
-    private final String nombreEstado;
+    private  Integer idEstado;
+    private  String nombreEstado;
+
+    public EstadoCita() {
+    }
 
     public EstadoCita(Integer idEstado, String nombreEstado) {
         this.idEstado = idEstado;

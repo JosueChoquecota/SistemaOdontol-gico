@@ -11,10 +11,14 @@ import java.time.LocalTime;
  * @author ASUS
  */
 public class Horario {
-    private final Integer idHorario;
-    private final LocalTime horarioInicio;
-    private final LocalTime horarioFin;
+    private  Integer idHorario;
+    private  LocalTime horarioInicio;
+    private  LocalTime horarioFin;
 
+    public Horario() {
+    }
+
+    
     public Horario(Integer idHorario, LocalTime horarioInicio, LocalTime horarioFin) {
         this.idHorario = idHorario;
         this.horarioInicio = horarioInicio;

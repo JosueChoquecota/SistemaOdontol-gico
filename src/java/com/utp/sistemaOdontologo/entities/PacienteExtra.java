@@ -9,10 +9,13 @@ import java.time.LocalDate;
 
 
 public class PacienteExtra {
-    private final Integer idExtra;
-    private final Paciente paciente;
-    private final LocalDate fechaNacimiento;
+    private  Integer idExtra;
+    private  Paciente paciente;
+    private  LocalDate fechaNacimiento;
     private Sexo sexo;
+
+    public PacienteExtra() {
+    }
 
     public PacienteExtra(Integer idExtra, Paciente paciente, LocalDate fechaNacimiento, Sexo sexo) {
         this.idExtra = idExtra;

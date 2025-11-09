@@ -9,10 +9,15 @@ package com.utp.sistemaOdontologo.entities;
  * @author ASUS
  */
 public class TipoDocumento {
-    private final Integer idTipoDocumento;
-    private final String nombre;
-    private final int longitud;
+    private Integer idTipoDocumento;
+    private String nombre;
+    private int longitud;
 
+    public TipoDocumento() {
+    }
+
+    
+    
     public TipoDocumento(Integer idTipoDocumento, String nombre, int longitud) {
         this.idTipoDocumento = idTipoDocumento;
         this.nombre = nombre;
@@ -28,4 +33,18 @@ public class TipoDocumento {
     public int getLongitud() {
         return longitud;
     }  
+
+    public void setIdTipoDocumento(Integer idTipoDocumento) {
+        this.idTipoDocumento = idTipoDocumento;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setLongitud(int longitud) {
+        this.longitud = longitud;
+    }
+    
+    
 }

@@ -2,26 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.utp.sistemaOdontologo.entities;
-import com.utp.sistemaOdontologo.entities.enums.TipoContacto;
+package com.utp.sistemaOdontologo.dtos;
 
 /**
  *
  * @author ASUS
  */
-public class Contacto {
-    private  Integer idContacto;
-    private String tipoContacto;
+public class ContactoInfoDTO {
+    private Integer idContacto;
     private String telefono;
     private String correo;
     private String direccion;
 
-    public Contacto() {
+    public ContactoInfoDTO() {
     }
 
-    public Contacto(Integer idContacto, String tipoContacto, String telefono, String correo, String direccion) {
+    public ContactoInfoDTO(Integer idContacto, String telefono, String correo, String direccion) {
         this.idContacto = idContacto;
-        this.tipoContacto = tipoContacto;
         this.telefono = telefono;
         this.correo = correo;
         this.direccion = direccion;
@@ -33,14 +30,6 @@ public class Contacto {
 
     public void setIdContacto(Integer idContacto) {
         this.idContacto = idContacto;
-    }
-
-    public String getTipoContacto() {
-        return tipoContacto;
-    }
-
-    public void setTipoContacto(String tipoContacto) {
-        this.tipoContacto = tipoContacto;
     }
 
     public String getTelefono() {
@@ -66,6 +55,6 @@ public class Contacto {
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
-
-   
+    
+    
 }

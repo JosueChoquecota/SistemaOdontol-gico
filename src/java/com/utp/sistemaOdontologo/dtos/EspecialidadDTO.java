@@ -2,21 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.utp.sistemaOdontologo.entities;
+package com.utp.sistemaOdontologo.dtos;
 
 /**
  *
  * @author ASUS
  */
-public class Especialidad {
-    private  Integer idEspecialidad;
-    private  String nombre;
+public class EspecialidadDTO {
+    private Integer idEspecialidad;
+    private String nombre;
     private String acronimo;
 
-    public Especialidad() {
+    public EspecialidadDTO() {
     }
 
-    public Especialidad(Integer idEspecialidad, String nombre, String acronimo) {
+    public EspecialidadDTO(Integer idEspecialidad, String nombre, String acronimo) {
         this.idEspecialidad = idEspecialidad;
         this.nombre = nombre;
         this.acronimo = acronimo;
@@ -45,7 +45,6 @@ public class Especialidad {
     public void setAcronimo(String acronimo) {
         this.acronimo = acronimo;
     }
-
     
     
 }
