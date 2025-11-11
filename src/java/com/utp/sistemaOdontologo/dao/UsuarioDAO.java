@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 /**
  *
  * @author ASUS
@@ -136,6 +137,11 @@ public class UsuarioDAO implements IUsuarioRepository{
         }
     }
     return usuario;   
+    }
+
+    @Override
+    public List<Usuario> listAll(Connection con) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
     

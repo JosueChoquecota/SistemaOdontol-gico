@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 public class TrabajadorServiceTest {
 
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         System.out.println("--- Iniciando Test de Inserción Transaccional (Java Puro) ---");
         
         // 1. Instanciar el servicio (la capa de negocio)
@@ -22,17 +22,17 @@ public class TrabajadorServiceTest {
         // --- Datos de Trabajador ---
         dto.setNombre("Alex");
         dto.setApellido("Uruchi");
-        dto.setColegiatura("777123"); // 
+        dto.setColegiatura("777462"); 
         dto.setFechaRegistro(LocalDate.now());
 
         // Claves Foráneas de Catálogo (Asumimos que estos IDs existen en la BD)
-        dto.setIdTipoDocumento(1); // Ejemplo: ID de DNI/Cédula
-        dto.setIdRol(2);           // Ejemplo: ID de Rol ODONTOLOGO
-        dto.setIdEspecialidad(2);  // Ejemplo: ID de Especialidad
+        dto.setIdTipoDocumento(1);
+        dto.setIdRol(2);
+        dto.setIdEspecialidad(2);
         
         // --- Datos de Usuario (Login) ---
-        dto.setUsername("Alex12");
-        dto.setContrasena("ClaveSegura2025!"); // Clave en texto plano
+        dto.setUsername("Alexll");
+        dto.setContrasena("ClaveSegura2025!");
         
         // --- Datos de Contacto ---
         dto.setTipoContacto("EMAIL");
@@ -41,15 +41,20 @@ public class TrabajadorServiceTest {
         dto.setDireccion("Av. Test 103");
         
         // 3. EJECUTAR: Llamar al Service para realizar la transacción de 3 pasos
-        Boolean resultado = trabajadorService.insert(dto);
+        // Cambiamos el tipo de resultado a Integer
+        Integer idTrabajadorGenerado = trabajadorService.insert(dto);
 
         // 4. VERIFICAR: Imprimir el resultado
         System.out.println("\n--- Resultado de la Prueba ---");
-        if (resultado) {
+        
+        // CORRECCIÓN: Verificamos si el ID generado es válido (no nulo y mayor que 0)
+        if (idTrabajadorGenerado != null && idTrabajadorGenerado > 0) {
             System.out.println("✅ PRUEBA EXITOSA: El trabajador se insertó correctamente.");
+            System.out.println("   > ID del Trabajador Generado: " + idTrabajadorGenerado);
             System.out.println("Verificar en la BD los 3 nuevos registros (Contacto, Usuario, Trabajador).");
         } else {
-            System.err.println("❌ PRUEBA FALLIDA: La inserción falló. Revisar logs y estado de la BD.");
+            System.err.println("❌ PRUEBA FALLIDA: La inserción falló o el servicio devolvió NULL.");
+            System.err.println("   > Resultado del Servicio: " + idTrabajadorGenerado);
         }
     }
 }

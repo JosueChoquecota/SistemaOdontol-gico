@@ -65,54 +65,7 @@ public class TrabajadorController extends HttpServlet {
     private void registrarTrabajador(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Mapeo de Parámetros (tomados del formulario/Postman)
-        TrabajadorDTORequest dto = new TrabajadorDTORequest();
-        
-        try {
-            // Campos de Trabajador
-            dto.setNombre(request.getParameter("nombre"));
-            dto.setApellido(request.getParameter("apellido"));
-            dto.setColegiatura(request.getParameter("colegiatura"));
-            dto.setIdTipoDocumento(Integer.parseInt(request.getParameter("idTipoDocumento"))); 
-            dto.setIdRol(Integer.parseInt(request.getParameter("idRol")));
-            
-            // Especialidad es opcional
-            String idEsp = request.getParameter("idEspecialidad");
-            dto.setIdEspecialidad(idEsp != null && !idEsp.isEmpty() ? Integer.parseInt(idEsp) : null);
-
-            // Campos de Usuario y Seguridad
-            dto.setUsername(request.getParameter("username"));
-            dto.setContrasena(request.getParameter("contrasena"));
-            
-            // Campos de Contacto
-            
-            dto.setCorreo(request.getParameter("correo"));
-            dto.setTelefono(request.getParameter("telefono"));
-            dto.setDireccion(request.getParameter("direccion"));
-            dto.setTipoContacto(request.getParameter("tipo_contacto"));
-            
-            dto.setFechaRegistro(LocalDate.now()); // Asignado por el sistema
-
-            // 2. Llamada al Servicio
-            if (trabajadorService.insert(dto)) {
-                // Éxito: Redirigir a una página de confirmación
-                request.setAttribute("mensaje", "Trabajador registrado con éxito.");
-                request.getRequestDispatcher("/WEB-INF/trabajador/success.jsp").forward(request, response);
-            } else {
-                // Error de Lógica de Negocio (ej. DNI/Colegiatura duplicada, DB error)
-                request.setAttribute("error", "Error al insertar el trabajador o datos duplicados.");
-                request.getRequestDispatcher("/WEB-INF/trabajador/registro.jsp").forward(request, response);
-            }
-            
-        } catch (NumberFormatException e) {
-            // Error de Formato (ej. idRol no es un número)
-            request.setAttribute("error", "Error de formato en ID: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/trabajador/registro.jsp").forward(request, response);
-        } catch (Exception e) {
-            // Error Inesperado (e.g., NullPointer, Hashing)
-            request.setAttribute("error", "Error inesperado del sistema: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/trabajador/registro.jsp").forward(request, response);
-        }
+       
 }
     // Dentro de la clase TrabajadorController
 

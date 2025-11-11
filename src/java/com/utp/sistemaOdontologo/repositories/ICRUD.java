@@ -4,16 +4,14 @@
  */
 package com.utp.sistemaOdontologo.repositories;
 
+import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.List;
 
-/**
- *
- * @author ASUS
- */
 public interface ICRUD <T, K> {
-    Boolean insert(T t);
-    Boolean update(T t);
-    Boolean delete(K id);
-    List<T> list();
-    T listById(K id);
+    Integer insert(Connection con, T t) throws SQLException;
+    Boolean update(Connection con, T t) throws SQLException;
+    Boolean delete(Connection con, K id) throws SQLException;
+    List<T> listAll(Connection con) throws SQLException;
+    T findById(Connection con, K id) throws SQLException;
 }

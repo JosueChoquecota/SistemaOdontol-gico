@@ -43,65 +43,61 @@ public class TrabajadorService {
         dbConnection = new ConnectionDataBase();
     }
     
-    public Boolean insert(TrabajadorDTORequest request) {
+    public Integer insert(TrabajadorDTORequest request) {
         
         Connection con = null;
         Integer idContactoGenerado = null;
         Integer idUsuarioGenerado = null;
-        Boolean exito = false;
+        Integer idTrabajadorGenerado = null; // Variable para capturar el ID final
         
         try {
             con = dbConnection.getConnection();
-            con.setAutoCommit(false); // <--- INICIA LA TRANSACCIÓN
+            con.setAutoCommit(false); // INICIA LA TRANSACCIÓN
             
-            // 1. Mapear y gestionar Contacto
+            // 1. Mapear e insertar Contacto (Devuelve Integer)
             Contacto contacto = TrabajadorMapper.toContactoEntity(request);
-            // El DAO ahora recibe la CONEXIÓN
             idContactoGenerado = contactoDAO.insert(con, contacto); 
 
-            // 2. Mapear, hashear y gestionar Usuario (Lógica de Negocio/Seguridad)
+            // 2. Mapear, hashear e insertar Usuario (Devuelve Integer)
             Usuario usuario = TrabajadorMapper.toUsuarioEntity(request);
-            
-            // Lógica de Servicio: Asignación de estado y hash
             usuario.setEstado(EstadoUsuario.ACTIVO);
             
             Empresa empresaStub = new Empresa();
-            empresaStub.setIdEmpresa(1); 
-            usuario.setEmpresa(empresaStub); // <--- ESTO DEBE ASIGNAR EL OBJETO        
+            empresaStub.setIdEmpresa(1);
+            usuario.setEmpresa(empresaStub);
             
-            // 2.2. ENCRIPTACIÓN REALIZADA CON TU CLASE
             String clavePlana = usuario.getContrasena();
-            String claveHasheada = EncriptarClave.encriptar(clavePlana); // <--- USO DE TU MÉTODO
-            usuario.setContrasena(claveHasheada); // Asigna el hash a la entidad
+            String claveHasheada = EncriptarClave.encriptar(clavePlana); 
+            usuario.setContrasena(claveHasheada);
             
-            // El DAO ahora recibe la CONEXIÓN
-            idUsuarioGenerado = usuarioDAO.insert(con, usuario); 
+            idUsuarioGenerado = usuarioDAO.insert(con, usuario); // DAO inserta y devuelve ID
             
-            // 3. Mapear y gestionar Trabajador
+            // 3. Mapear e insertar Trabajador
             Trabajador trabajador = TrabajadorMapper.toTrabajadorEntity(request, idContactoGenerado, idUsuarioGenerado);
             
-            // El DAO ahora recibe la CONEXIÓN
-            exito = trabajadorDAO.insert(con, trabajador); 
+            // Cambiamos a llamar un método que devuelve el ID, o lo asignamos si el DAO devuelve Boolean
+            // Asumiendo que tu trabajadorDAO tiene el insert que devuelve el ID:
+            idTrabajadorGenerado = trabajadorDAO.insert(con, trabajador); // Asumo que este método devuelve el ID generado.
             
-            // Si llegamos aquí sin excepción, hacemos COMMIT
-            if (exito) {
+            // 4. Finalizar Transacción
+            if (idTrabajadorGenerado != null && idTrabajadorGenerado > 0) {
                 con.commit();
             } else {
-                con.rollback(); // Si el insertTrabajador falló por alguna razón
+                con.rollback(); 
+                return null; // Falló la inserción del trabajador
             }
             
         } catch (Exception e) {
-            System.err.println("Error transaccional al crear trabajador: " + e.getMessage());
-            // Si hay excepción (e.g., error de SQL, hashing), hacemos ROLLBACK
-            try { if (con != null) con.rollback(); } catch (SQLException ex) { /* log error */ }
-            return false;
+            System.err.println("❌ Error transaccional al crear trabajador: " + e.getMessage());
+            try { if (con != null) con.rollback(); } catch (SQLException ex) { System.err.println("Rollback Error."); }
+            return null; // Fallo total
             
         } finally {
-            // Siempre cerramos la conexión
-            try { if (con != null) con.close(); } catch (SQLException ex) { /* log error */ }
+            try { if (con != null) con.close(); } catch (SQLException ex) { /* Cierra conexión */ }
         }
         
-        return exito;
+        // Retorna el ID generado para cumplir con el contrato ICRUD (Integer)
+        return idTrabajadorGenerado; 
     }
     
     public Boolean delete(Integer idTrabajador) {

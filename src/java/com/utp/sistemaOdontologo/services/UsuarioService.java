@@ -22,14 +22,9 @@ public class UsuarioService {
     private UsuarioDAO usuarioDAO;
     private ConnectionDataBase dbConnection;
             
-            
-    
-    
-    
     public UsuarioService() {
         usuarioDAO = new UsuarioDAO();
         dbConnection = new ConnectionDataBase();
-    
     }
 
     public UsuarioInfoDTO login(LoginDTORequest request) {
@@ -46,29 +41,17 @@ public class UsuarioService {
                 // Usuario no encontrado
                 return null; 
             }
-            
-            // 2. Verificar estado (opcional, pero buena práctica)
             if (usuarioDB.getEstado() != EstadoUsuario.ACTIVO) {
-                 // Bloqueado o inactivo
                  return null;
             }
 
-            // 3. VERIFICACIÓN DE CONTRASEÑA (LÓGICA DE SEGURIDAD)
             String clavePlana = request.getContrasena();
             String hashAlmacenado = usuarioDB.getContrasena();
             
-            // En este punto, tu EncriptarClave DEBE tener un método 'comparar' o 'check'
-            // Ya que solo tienes el método 'encriptar', compararemos los hashes:
-            
-            // Genera el hash de la clave plana ingresada
             String hashIngresado = EncriptarClave.encriptar(clavePlana); 
             
-            // Compara el hash ingresado con el hash almacenado
             if (hashIngresado.equals(hashAlmacenado)) { 
                 
-                // 4. ÉXITO: Mapear la entidad a un DTO seguro para la sesión
-                // Si la clave coincide, devolvemos el objeto UsuarioInfoDTO
-                // Necesitarás un Mapper auxiliar para esto. Usaremos una conversión directa por ahora.
                 UsuarioInfoDTO dtoResponse = new UsuarioInfoDTO();
                 dtoResponse.setUsername(usuarioDB.getUsername());
                 dtoResponse.setIdUsuario(usuarioDB.getIdUsuario());

@@ -17,7 +17,6 @@ public class Pago {
     private  Cita cita;
     private  float monto;
     private  MetodoPago metodo;
-    
     private EstadoPago estadoPago;
     private LocalDate fechaPago;
 
@@ -36,25 +35,52 @@ public class Pago {
     public Integer getIdPago() {
         return idPago;
     }
+
+    public void setIdPago(Integer idPago) {
+        this.idPago = idPago;
+    }
+
     public Cita getCita() {
         return cita;
     }
+
+    public void setCita(Cita cita) {
+        this.cita = cita;
+    }
+
     public float getMonto() {
         return monto;
     }
+
+    public void setMonto(float monto) {
+        this.monto = monto;
+    }
+
     public MetodoPago getMetodo() {
         return metodo;
     }
+
+    public void setMetodo(MetodoPago metodo) {
+        this.metodo = metodo;
+    }
+
     public EstadoPago getEstadoPago() {
         return estadoPago;
     }
+
     public void setEstadoPago(EstadoPago estadoPago) {
         this.estadoPago = estadoPago;
     }
+
     public LocalDate getFechaPago() {
         return fechaPago;
     }
+
     public void setFechaPago(LocalDate fechaPago) {
         this.fechaPago = fechaPago;
-    }  
+    }
+
+
+    
+    
 }

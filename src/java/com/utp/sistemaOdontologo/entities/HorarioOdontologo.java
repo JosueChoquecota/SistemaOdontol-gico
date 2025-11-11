@@ -26,16 +26,43 @@ public class HorarioOdontologo {
         this.horario = horario;
         this.diaSemanaa = diaSemanaa;
     }
+
     public Integer getIdHorarioOdontologo() {
         return idHorarioOdontologo;
     }
+
+    public void setIdHorarioOdontologo(Integer idHorarioOdontologo) {
+        this.idHorarioOdontologo = idHorarioOdontologo;
+    }
+
     public Trabajador getTrabajador() {
         return trabajador;
     }
+
+    public void setTrabajador(Trabajador trabajador) {
+        this.trabajador = trabajador;
+    }
+
     public Horario getHorario() {
         return horario;
     }
+
+    public void setHorario(Horario horario) {
+        this.horario = horario;
+    }
+
     public DiaSemana getDiaSemanaa() {
         return diaSemanaa;
     }
+
+    public void setDiaSemanaa(DiaSemana diaSemanaa) {
+        this.diaSemanaa = diaSemanaa;
+    }
+    
+    
+    
 }
+
+
+
+

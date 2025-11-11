@@ -28,27 +28,44 @@ public class TrabajadorDAO implements ITrabajadorRepository {
     private ConnectionDataBase con;
     
     @Override
-    public Boolean insert(Connection con, Trabajador trabajador) throws SQLException {
-        String SQL = "INSERT INTO Trabajadores (id_usuario, id_contacto, id_tipo_doc, id_especialidad, nombre, apellido, colegiatura, rol, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE());";
+    public Integer insert(Connection con, Trabajador trabajador) throws SQLException {
+        String SQL = "INSERT INTO Trabajadores (id_usuario, id_contacto, id_tipo_doc, id_especialidad, nombre, apellido, colegiatura, rol, fecha_registro) OUTPUT INSERTED.id_trabajador VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE());";
+        Integer idGenerado = null;
+
+        // 1. Usar Statement.RETURN_GENERATED_KEYS (o OUTPUT INSERTED.id_trabajador en SQL Server)
         try (PreparedStatement ps = con.prepareStatement(SQL)) {
+
+            // Asignación de las Claves Foráneas de Paciente/Contacto
             ps.setInt(1, trabajador.getUsuario().getIdUsuario());
             ps.setInt(2, trabajador.getContacto().getIdContacto());
             ps.setInt(3, trabajador.getTipoDocumento().getIdTipoDocumento());
-            
-            // Manejo de especialidad NULL
-            if (trabajador.getEspecialidad() != null) {
+
+            // 2. Manejo de Especialidad NULL (Posición 4)
+            if (trabajador.getEspecialidad() != null && trabajador.getEspecialidad().getIdEspecialidad() != null) {
                 ps.setInt(4, trabajador.getEspecialidad().getIdEspecialidad());
             } else {
                 ps.setNull(4, java.sql.Types.INTEGER);
             }
-            
+
+            // 3. Campos Directos y Rol (Posiciones 5, 6, 7, 8)
             ps.setString(5, trabajador.getNombre());
             ps.setString(6, trabajador.getApellido());
             ps.setString(7, trabajador.getColegiatura());
-            ps.setString(8, trabajador.getRol().name());
+            ps.setString(8, trabajador.getRol().name()); // Usar el nombre del ENUM
 
-            return ps.executeUpdate() > 0;
+            // 4. Ejecutar y obtener ID (executeQuery porque usamos OUTPUT INSERTED)
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    idGenerado = rs.getInt(1); // Captura el ID de la columna OUTPUT
+                }
+            }
         }
+
+        // 5. Devolver el ID generado para cumplir con el contrato ICRUD
+        if (idGenerado == null) {
+            throw new SQLException("Error DAO: Fallo al obtener ID de Trabajador generado.");
+        }
+        return idGenerado;
     }
 
     @Override
@@ -220,5 +237,25 @@ public class TrabajadorDAO implements ITrabajadorRepository {
     
     return trabajador;
     }
+    }
+
+    @Override
+    public String findNombreById(Connection con, Integer idTrabajador) throws SQLException {
+    String SQL = "SELECT nombre, apellido FROM Trabajadores WHERE id_trabajador = ?";
+        String nombreCompleto = null;
+        try (PreparedStatement ps = con.prepareStatement(SQL)) {
+            ps.setInt(1, idTrabajador);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    nombreCompleto = rs.getString("nombre") + " " + rs.getString("apellido");
+                }
+            }
+        }
+        return nombreCompleto;
+    }
+
+    @Override
+    public List<Trabajador> listAll(Connection con) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

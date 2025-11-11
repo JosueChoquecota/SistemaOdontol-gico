@@ -29,14 +29,27 @@ public class Horario {
         return idHorario;
     }
 
+    public void setIdHorario(Integer idHorario) {
+        this.idHorario = idHorario;
+    }
+
     public LocalTime getHorarioInicio() {
         return horarioInicio;
+    }
+
+    public void setHorarioInicio(LocalTime horarioInicio) {
+        this.horarioInicio = horarioInicio;
     }
 
     public LocalTime getHorarioFin() {
         return horarioFin;
     }
 
-   
+    public void setHorarioFin(LocalTime horarioFin) {
+        this.horarioFin = horarioFin;
+    }
+
+  
+    
     
 }
