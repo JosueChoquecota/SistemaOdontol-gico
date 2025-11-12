@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends HttpServlet {
     private UsuarioService usuarioService = new UsuarioService();
 
-    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
@@ -49,6 +48,4 @@ public class LoginController extends HttpServlet {
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
-    
-    
 }

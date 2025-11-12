@@ -37,7 +37,7 @@ public class ConnectionDataBase {
             Class.forName(DRIVER); 
             // Crear y devolver la nueva conexión
             Connection con = DriverManager.getConnection(URL, USER, PASS);
-            // System.out.println("Conexión abierta."); // Descomentar para debug
+            System.out.println("Conexión abierta."); // Descomentar para debug
             return con; 
         } catch (ClassNotFoundException e) {
             throw new SQLException("Driver JDBC no encontrado: " + e.getMessage());
