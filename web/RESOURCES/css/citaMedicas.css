@@ -1,0 +1,156 @@
+/* ========================================= */
+/* ESTILOS PERSONALIZADOS (SISTEMA MÉDICO)   */
+/* ========================================= */
+
+/* 1. Colores y Fondos */
+.bg-teal {
+    background-color: #2b9b9b !important;
+}
+
+.text-teal {
+    color: #2b9b9b !important;
+}
+
+.border-teal {
+    border: 1px solid #2b9b9b !important;
+}
+
+/* 2. Contenedores de Íconos (Cuadrados con ícono dentro) */
+.icon-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2b9b9b;
+    border-radius: 0.25rem; /* Rounded */
+}
+
+/* 3. Botones de la Tabla (Editar/Eliminar) */
+.btn-table-action {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 4. Botones Grandes (Reservar/Imprimir) */
+.btn-large-action {
+    width: 200px;
+    font-weight: bold;
+}
+
+/* 5. Títulos y Secciones */
+.section-title-container {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.text-dark-grey {
+    color: #333;
+}
+
+/* 6. Wrapper Principal */
+.main-content-wrapper {
+    background-color: #fff;
+}
+
+/* ========================================= */
+/* ESTILOS PERSONALIZADOS (SISTEMA MÉDICO)   */
+/* ========================================= */
+
+/* 1. Colores y Fondos - Mayor especificidad */
+.bg-teal,
+button.bg-teal,
+.btn.bg-teal {
+    background-color: #2b9b9b !important;
+    border-color: #2b9b9b !important;
+}
+
+.text-teal {
+    color: #2b9b9b !important;
+}
+
+.border-teal,
+.btn-outline-teal {
+    border: 2px solid #2b9b9b !important;
+    color: #2b9b9b !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-teal:hover {
+    background-color: #2b9b9b !important;
+    color: white !important;
+}
+
+.btn-solid-teal {
+    background-color: #2b9b9b !important;
+    border-color: #2b9b9b !important;
+    color: white !important;
+}
+
+.btn-solid-teal:hover {
+    background-color: #248080 !important;
+    border-color: #248080 !important;
+}
+
+/* 2. Contenedores de Íconos */
+.icon-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2b9b9b !important;
+    border-radius: 0.25rem;
+}
+
+/* 3. Botones de la Tabla */
+.btn-table-action {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.btn-table-action i {
+    font-size: 1rem;
+}
+
+/* 4. Botones Grandes */
+.btn-large-action {
+    min-width: 200px;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+}
+
+/* 5. Títulos y Secciones */
+.section-title-container {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.text-dark-grey {
+    color: #333 !important;
+}
+
+/* 6. Wrapper Principal */
+.main-content-wrapper {
+    background-color: #fff;
+}
+
+/* 7. Tabla personalizada */
+.table thead th {
+    color: #333;
+    font-weight: 600;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}

@@ -5,11 +5,12 @@ import com.utp.sistemaOdontologo.dtos.CitaDTOResponse;
 import com.utp.sistemaOdontologo.services.CitaService;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
 
 
 public class CitaController extends HttpServlet {
@@ -44,6 +45,9 @@ public class CitaController extends HttpServlet {
                 case "listar_citas":
                     listarCitas(request, response);
                     break;
+                 case "obtener_citas_json":
+                obtenerCitasJson(request, response); // Llama al método JSON
+                break;
                 default:
                     request.setAttribute("error", "Operación no reconocida.");
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
@@ -58,7 +62,20 @@ public class CitaController extends HttpServlet {
     // =================================================================
     // MÉTODOS DE MANEJO DE FLUJO (UPDATE, DELETE, COMPLETAR)
     // =================================================================
+    private void obtenerCitasJson(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
 
+        // 1. Obtener la lista de DTOs
+        List<CitaDTOResponse> lista = citaService.listAll();
+
+        String citasJson = new Gson().toJson(lista); 
+
+        // 3. Enviar la respuesta
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(citasJson);
+    }
+    
     private void completarCita(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

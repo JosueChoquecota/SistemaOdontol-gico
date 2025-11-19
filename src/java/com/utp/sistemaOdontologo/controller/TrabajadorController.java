@@ -30,8 +30,10 @@ public class TrabajadorController extends HttpServlet {
         // Parámetro para saber qué acción ejecutar (login, registro_trabajador, etc.)
         String operacion = request.getParameter("operacion"); 
 
-        if (operacion == null) {
-            operacion = ""; // Evita NullPointerException si no se envía la operación
+       if (operacion == null || operacion.isEmpty()) {
+            // ⭐️ CORRECCIÓN: Si no hay operación (es la carga inicial de la página), 
+            // forzamos la operación de listado.
+            operacion = "listar_trabajadores"; 
         }
 
         switch (operacion) {
@@ -63,9 +65,62 @@ public class TrabajadorController extends HttpServlet {
     // Método Auxiliar: registrarTrabajador (Toda la lógica de mapeo)
     // -------------------------------------------------------------------------
     private void registrarTrabajador(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
-       
+    TrabajadorDTORequest dto = new TrabajadorDTORequest();
+    Integer idTrabajadorGenerado = null;
+    
+    try {
+        // =======================================================
+        // 1. MAPEANDO DATOS DEL FORMULARIO (TRABAJADOR + CONTACTO + USUARIO)
+        // =======================================================
+        
+        // Datos de Trabajador (Nombre, Apellido, Colegiatura)
+        dto.setNombre(request.getParameter("nombre"));
+        dto.setApellido(request.getParameter("apellido"));
+        dto.setColegiatura(request.getParameter("colegiatura"));
+
+        // IDs de Catálogo (Requiere Integer.parseInt)
+        dto.setIdTipoDocumento(Integer.parseInt(request.getParameter("idTipoDocumento")));
+        dto.setIdRol(Integer.parseInt(request.getParameter("idRol")));
+        
+        // La especialidad es opcional/nula
+        String idEsp = request.getParameter("idEspecialidad");
+        if (idEsp != null && !idEsp.isEmpty() && !idEsp.equals("0")) {
+            dto.setIdEspecialidad(Integer.parseInt(idEsp));
+        }
+
+        // Datos de Contacto (Correo, Teléfono, Dirección)
+        dto.setCorreo(request.getParameter("correo"));
+        dto.setTelefono(request.getParameter("telefono"));
+        dto.setDireccion(request.getParameter("direccion"));
+        dto.setTipoContacto("EMAIL"); // Fijo para el registro inicial
+        
+        // Datos de Usuario (Login y Contraseña)
+        dto.setUsername(request.getParameter("username"));
+        dto.setContrasena(request.getParameter("contrasena"));
+        
+        // Fecha de registro (Asignada por el sistema)
+        dto.setFechaRegistro(LocalDate.now());
+
+        // 2. LLAMADA AL SERVICIO (Transaccional INSERT)
+        idTrabajadorGenerado = trabajadorService.insert(dto);
+
+        // 3. MANEJO DE RESPUESTA
+        if (idTrabajadorGenerado != null && idTrabajadorGenerado > 0) {
+            request.setAttribute("mensaje", "✅ Trabajador registrado con ID: " + idTrabajadorGenerado);
+        } else {
+            request.setAttribute("error", "❌ No se pudo registrar. Verifique unicidad (DNI/Usuario/Colegiatura).");
+        }
+        
+    } catch (NumberFormatException e) {
+        request.setAttribute("error", "Error de formato en un ID/Número. " + e.getMessage());
+    } catch (Exception e) {
+        request.setAttribute("error", "Error de sistema al registrar: " + e.getMessage());
+    }
+    
+    // Redirige a la lista de trabajadores para mostrar el resultado
+    listarTrabajadores(request, response);
 }
     // Dentro de la clase TrabajadorController
 
@@ -104,26 +159,27 @@ public class TrabajadorController extends HttpServlet {
             listarTrabajadores(request, response); 
         }
     }
-    // Dentro de la clase TrabajadorController
     private void listarTrabajadores(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
-        try {
-            // 1. Llamada al Servicio (Devuelve List<TrabajadorDTOResponse>)
-            List<TrabajadorDTOResponse> lista = trabajadorService.findAll();
+    try {
+        // 1. LLAMADA AL SERVICIO Y OBTENCIÓN DE LA LISTA
+        // Nota: Si el Service falla, la excepción se lanza aquí y es capturada por el catch.
+        List<TrabajadorDTOResponse> lista = trabajadorService.findAll();
 
-            // 2. Adjuntar la lista al objeto request para que la JSP la lea
-            request.setAttribute("listaTrabajadores", lista);
+      
+        
+        request.setAttribute("listaTrabajadores", lista);
+        request.getRequestDispatcher("Trabajadores.jsp").forward(request, response);
 
-            // 3. Redirigir a la JSP del listado
-            request.getRequestDispatcher("/WEB-INF/trabajador/listado.jsp").forward(request, response);
+    } catch (Exception e) {
+        // Manejo de errores
+        System.err.println("❌ Error FATAL en listarTrabajadores: " + e.getMessage());
+        request.setAttribute("error", "Error al cargar la lista: " + e.getMessage());
+   request.getRequestDispatcher("Trabajadores.jsp").forward(request, response);
 
-        } catch (Exception e) {
-            // Manejo de errores
-            request.setAttribute("error", "Error al cargar la lista de trabajadores: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/general/error.jsp").forward(request, response);
-        }
     }
+}
     private void eliminarTrabajador(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 

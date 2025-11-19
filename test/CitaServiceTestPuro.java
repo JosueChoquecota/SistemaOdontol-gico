@@ -21,7 +21,7 @@ public class CitaServiceTestPuro {
         String dniDinamico = timestampStr.substring(5, 13); 
         
         //testCrearCitaNuevoPaciente(FECHA_TEST, dniDinamico);
-        //testListarCitas();
+        testListarCitas();
         //testActualizarCita(6);
         //testEliminarCita(9);
         //testCompletarCita(10);

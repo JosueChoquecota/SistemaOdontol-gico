@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+    <web-app 
+        version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
         <servlet>
             <servlet-name>UsuarioController</servlet-name>
             <servlet-class>com.utp.sistemaOdontologo.controller.LoginController</servlet-class>
@@ -8,15 +11,22 @@
             <servlet-name>CitaController</servlet-name>
             <servlet-class>com.utp.sistemaOdontologo.controller.CitaController</servlet-class>
         </servlet>
+        <servlet>
+            <servlet-name>TrabajadorController</servlet-name>
+            <servlet-class>com.utp.sistemaOdontologo.controller.TrabajadorController</servlet-class>
+        </servlet>
+        
         <servlet-mapping>
             <servlet-name>UsuarioController</servlet-name>
-            <url-pattern>/UsuarioController.do</url-pattern>
+            <url-pattern>/UsuarioController</url-pattern>
         </servlet-mapping>
-        
-        
         <servlet-mapping>
             <servlet-name>CitaController</servlet-name>
-            <url-pattern>/CitaController.do</url-pattern>
+            <url-pattern>/CitaController</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>TrabajadorController</servlet-name>
+            <url-pattern>/trabajadores</url-pattern>
         </servlet-mapping>
 
         <session-config>

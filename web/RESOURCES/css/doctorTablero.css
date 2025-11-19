@@ -1,0 +1,298 @@
+/* EN: RESOURCES/css/doctorTablero.css (CÓDIGO COMPLETO Y CORREGIDO) */
+
+/* ============================================= */
+/* REGLA FALTANTE PARA POSICIÓN                  */
+/* ============================================= */
+body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* ============================================= */
+/* ESTILOS DEL LAYOUT                           */
+/* ============================================= */
+.contenedor-header {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+/* ============================================= */
+/* ESTILOS PARA LA BIENVENIDA                   */
+/* ============================================= */
+.bienvenida {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background-color: #f8f9fa;
+}
+
+.saludo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* ============================================= */
+/* ESTILOS PARA LOS BOTONES                      */
+/* ============================================= */
+.botones {
+    display: flex;
+    gap: 12px;
+    padding: 20px 30px;
+}
+
+.fila-3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    gap: 15px;
+}
+
+.grupo-botones {
+    display: flex;
+    gap: 12px;
+}
+
+/* AGREGAR ESTO: Igualar botones de vista */
+.fila-3 .grupo-botones:last-child .mi-boton {
+    min-width: 95px; /* Ancho mínimo igual para todos */
+    text-align: center;
+    padding: 10px 20px;
+}
+
+/* Estilo base para todos los botones */
+.mi-boton {
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+/* Botones verdes (turquesa) */
+.btn-verde {
+    background-color: #2b9b9b;
+    color: white;
+    padding: 10px 28px;
+}
+
+.btn-verde:hover {
+    background-color: #248585;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(43, 155, 155, 0.3);
+}
+
+.btn-verde:active {
+    transform: translateY(0);
+    background-color: #1f7a7a;
+}
+
+/* Botones grises (mismo estilo pero en gris) */
+.btn-gris {
+    background-color: #2b9b9b;
+    color: white;
+    padding: 10px 28px;
+}
+
+.btn-gris:hover {
+    background-color: #248585;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(43, 155, 155, 0.3);
+}
+
+.btn-gris:active {
+    transform: translateY(0);
+    background-color: #1f7a7a;
+}
+
+/* Botones de navegación (< >) más cuadrados */
+.fila-3 .grupo-botones button:first-child,
+.fila-3 .grupo-botones button:nth-child(2) {
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Botón Help más ancho */
+.bienvenida .btn-verde {
+    padding: 10px 30px;
+    font-size: 15px;
+}
+
+/* Título del mes en fila-3 */
+.fila-3 .titulo-pixel {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0 20px;
+    min-width: 200px;
+    text-align: center;
+}
+
+/* ============================================= */
+/* ESTILOS DE FULLCALENDAR (VERSIÓN LIMPIA)       */
+/* ============================================= */
+
+/* Contenedor principal del calendario */
+.contenedor-calendario {
+    padding: 0 30px 30px 30px;
+}
+
+/* 1. ELIMINA EL BORDE EXTERIOR (Tu solicitud) */
+#calendar .fc {
+    border: none !important;
+}
+
+/* 2. HACE LAS LÍNEAS INTERNAS MÁS CLARAS */
+#calendar .fc-timegrid-slot-lane,
+#calendar .fc-timegrid-col,
+#calendar .fc-col-header-cell,
+#calendar .fc-timegrid-axis-cushion, /* Etiquetas de hora (9am) */
+#calendar .fc-scrollgrid-section > * { 
+    border-color: #eee; /* Un gris muy claro */
+}
+
+/* 3. QUITA EL BORDE DE LA CABECERA (Sun 16, Mon 17...) */
+#calendar .fc-col-header {
+    border: none;
+}
+
+/* 4. ESTILOS DE TEXTO Y FONDO */
+
+/* Quita el subrayado de los días de la semana */
+.fc .fc-col-header-cell-cushion {
+    color: inherit;
+    text-decoration: none;
+    padding: 10px 0;
+}
+
+/* Color de las horas (9am, 10am...) */
+.fc .fc-timegrid-slot-label {
+    color: #666;
+    vertical-align: top;
+    padding-top: 5px;
+}
+
+/* Color de fondo para el día de "Hoy" */
+.fc .fc-day-today {
+    background-color: #e8f5f5 !important;
+}
+
+/* Estilo de los eventos (si añades en el futuro) */
+.fc-event {
+    border-radius: 6px;
+    padding: 2px 6px;
+    background-color: #2b9b9b !important;
+    border-color: #2b9b9b !important;
+}
+
+/* 5. ESTILOS PARA LA CABECERA APILADA (DOM / 16) */
+
+/* El contenedor (la 'a') se vuelve flexible y en columna */
+.fc .fc-col-header-cell-cushion {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 0 !important; /* Ajusta el padding si es necesario */
+}
+
+/* Estilo para el nombre del día (dom, lun...) */
+.header-day-name {
+    font-size: 13px;
+    color: #5f6368; /* Un gris como el de la referencia */
+    text-transform: capitalize; /* Para que sea "Dom" en vez de "dom" */
+}
+
+/* Estilo para el número (16, 17...) */
+.header-day-number {
+    font-size: 22px; /* Un poco más grande */
+    font-weight: 500;
+    color: #333;
+    margin-top: 2px;
+}
+
+/* ============================================= */
+/* COLUMNA DERECHA - VERSIÓN CORREGIDA           */
+/* ============================================= */
+
+.custom-time-right {
+    position: fixed; /* Cambio clave: fixed en lugar de absolute */
+    right: 30px; /* Margen desde el borde derecho de la pantalla */
+    top: 290px; /* Ajusta según donde empiece tu calendario */
+    width: 65px;
+    background: white;
+    border-left: 1px solid #eee;
+    z-index: 1000;
+    pointer-events: none;
+    max-height: calc(100vh - 350px);
+    overflow: hidden;
+}
+
+.custom-time-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15 px;
+    color: rgb(128, 128, 128);
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+    font-family: inherit;
+    line-height: 1.2;
+}
+
+/* Quitar los ajustes que empujaban el contenido */
+.fc-timegrid-cols {
+    width: 100% !important;
+    margin-right: 0 !important;
+}
+
+.fc-scroller-liquid-absolute {
+    position: relative !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.fc-timegrid-body {
+    margin-right: 0 !important;
+}
+
+/* ============================================= */
+/* AJUSTAR TAMAÑO Y ESPACIADO DEL CALENDARIO     */
+/* ============================================= */
+
+/* Agregar padding alrededor del calendario */
+#calendar {
+    padding: 5px 30px;
+    box-sizing: border-box;
+    margin-right: 80px; /* Espacio para la columna derecha fija */
+}
+
+/* Reducir la altura del calendario */
+.fc {
+    height: auto !important;
+}
+
+/* Ajustar la altura de la vista */
+.fc-view-harness {
+    height: 70vh !important;
+}
+
+/* Agregar margen superior al calendario */
+.contenedor-header #calendar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
