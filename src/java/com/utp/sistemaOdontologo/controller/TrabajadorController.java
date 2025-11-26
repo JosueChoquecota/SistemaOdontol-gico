@@ -196,7 +196,7 @@ public class TrabajadorController extends HttpServlet {
             int id = Integer.parseInt(idParam);
 
             // 1. Llamada al Servicio
-            if (trabajadorService.delete(id)) {
+            if (trabajadorService.eliminarTrabajador(id)) {
                 request.setAttribute("mensaje", "Trabajador eliminado con éxito.");
             } else {
                 request.setAttribute("error", "No se pudo eliminar el trabajador. Es posible que no exista.");

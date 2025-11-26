@@ -166,7 +166,7 @@ public Integer insert(Connection con, PacienteDatos paciente) throws SQLExceptio
   
 
     
-    public Boolean delete(Connection con, PacienteDatos t) throws SQLException {
+    public Boolean eliminarPaciente(Connection con, PacienteDatos t) throws SQLException {
     String SQL = "DELETE FROM PacientesDatos WHERE id_paciente = ?";
 
             try (PreparedStatement ps = con.prepareStatement(SQL)) {
@@ -225,7 +225,15 @@ public Integer insert(Connection con, PacienteDatos paciente) throws SQLExceptio
 
     @Override
     public Boolean delete(Connection con, Integer id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // Verifica si tu tabla se llama 'Pacientes' o 'PacientesDatos'
+        String sql = "DELETE FROM PacientesDatos WHERE id_paciente = ?";
+        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // Retorna true si borró al menos una fila
+        }
     }
 
 }

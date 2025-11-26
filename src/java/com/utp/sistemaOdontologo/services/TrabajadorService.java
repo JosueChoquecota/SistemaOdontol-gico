@@ -5,11 +5,16 @@
 package com.utp.sistemaOdontologo.services;
 
 import com.utp.sistemaOdontologo.connection.ConnectionDataBase;
+import com.utp.sistemaOdontologo.dao.CitaDAO;
 import com.utp.sistemaOdontologo.dao.ContactoDAO;
+import com.utp.sistemaOdontologo.dao.HistoriaCitaDAO;
+import com.utp.sistemaOdontologo.dao.HorarioOdontologoDAO;
+import com.utp.sistemaOdontologo.dao.PagoDAO;
 import com.utp.sistemaOdontologo.dao.TrabajadorDAO;
 import com.utp.sistemaOdontologo.dao.UsuarioDAO;
 import com.utp.sistemaOdontologo.dtos.TrabajadorDTORequest;
 import com.utp.sistemaOdontologo.dtos.TrabajadorDTOResponse;
+import com.utp.sistemaOdontologo.entities.Cita;
 import com.utp.sistemaOdontologo.entities.Contacto;
 import com.utp.sistemaOdontologo.entities.Empresa;
 import com.utp.sistemaOdontologo.entities.Trabajador;
@@ -29,18 +34,28 @@ import java.util.List;
  */
 public class TrabajadorService {
    
-    private ContactoDAO contactoDAO;
-    private UsuarioDAO usuarioDAO;
-    private TrabajadorDAO trabajadorDAO;
-    private ConnectionDataBase dbConnection;
-    private Empresa empresa;
+    private final ConnectionDataBase dbConnection;
+    private final TrabajadorDAO trabajadorDAO;
+    private final ContactoDAO contactoDAO;
+    private final UsuarioDAO usuarioDAO;
     
+    // NUEVOS DAOS PARA LA ELIMINACIÓN EN CASCADA
+    private final HorarioOdontologoDAO horarioOdontologoDAO;
+    private final CitaDAO citaDAO;
+    private final HistoriaCitaDAO historiaCitaDAO;
+    private final PagoDAO pagoDAO;
+
     public TrabajadorService() {
-        // Inicializamos los DAOs y el manejador de conexión
-        contactoDAO = new ContactoDAO();
-        usuarioDAO = new UsuarioDAO();
-        trabajadorDAO = new TrabajadorDAO();
-        dbConnection = new ConnectionDataBase();
+        this.dbConnection = new ConnectionDataBase();
+        this.trabajadorDAO = new TrabajadorDAO();
+        this.contactoDAO = new ContactoDAO();
+        this.usuarioDAO = new UsuarioDAO();
+        
+        // ¡¡¡AQUÍ ESTABA EL ERROR!!! TE FALTABAN ESTAS LÍNEAS:
+        this.horarioOdontologoDAO = new HorarioOdontologoDAO();
+        this.citaDAO = new CitaDAO();
+        this.historiaCitaDAO = new HistoriaCitaDAO();
+        this.pagoDAO = new PagoDAO();
     }
     
     public Integer insert(TrabajadorDTORequest request) {
@@ -100,40 +115,42 @@ public class TrabajadorService {
         return idTrabajadorGenerado; 
     }
     
-    public Boolean delete(Integer idTrabajador) {
+    // MÉTODO DE ELIMINACIÓN CORREGIDO (Ya no dará NullPointer)
+    public boolean eliminarTrabajador(Integer idTrabajador) {
         Connection con = null;
-        Boolean exito = false;
+        boolean exito = false;
 
         try {
-            // 1. OBTENER CONEXIÓN E INICIAR TRANSACCIÓN
-            con = dbConnection.getConnection(); // Asumimos acceso a ConnectionDataBase
+            con = dbConnection.getConnection();
             con.setAutoCommit(false); 
 
-            // 2. OBTENER FKS (idContacto, idUsuario)
-            int[] fks = trabajadorDAO.findFksById(con, idTrabajador);
-            int idContacto = fks[0];
-            int idUsuario = fks[1];
+            // 1. ELIMINAR HORARIOS
+            horarioOdontologoDAO.deleteByTrabajadorId(con, idTrabajador);
 
-            if (idContacto == 0 || idUsuario == 0) {
-                // Si no encuentra las FKs, la eliminación de registros principales no puede continuar.
-                throw new SQLException("No se encontraron registros de Contacto/Usuario asociados.");
+            // 2. ELIMINAR CITAS ASOCIADAS (Ahora citaDAO ya no es null)
+            List<Cita> citasDelDoctor = citaDAO.findByIdTrabajador(con, idTrabajador);
+            
+            if (citasDelDoctor != null) {
+                for (Cita c : citasDelDoctor) {
+                    historiaCitaDAO.deleteByCitaId(con, c.getIdCita());
+                    pagoDAO.deleteByCitaId(con, c.getIdCita());
+                    citaDAO.delete(con, c.getIdCita());
+                }
             }
 
-            // 3. ELIMINAR EN ORDEN INVERSO (Hijo a Padre): Trabajador -> Usuario -> Contacto
-            trabajadorDAO.delete(con, idTrabajador); // Elimina la entrada principal
-            usuarioDAO.delete(con, idUsuario);       // Elimina el acceso
-            contactoDAO.delete(con, idContacto);     // Elimina los datos de contacto
-
-            // 4. CONFIRMAR TRANSACCIÓN
-            con.commit();
+            // 3. ELIMINAR TRABAJADOR
+            trabajadorDAO.delete(con, idTrabajador);
+            
+            con.commit(); 
             exito = true;
 
         } catch (Exception e) {
-            System.err.println("Error transaccional DELETE: No se pudo eliminar el trabajador. " + e.getMessage());
-            try { if (con != null) con.rollback(); } catch (SQLException ex) { /* Log rollback error */ }
+            System.err.println("Error transaccional DELETE: " + e.getMessage());
+            try { if (con != null) con.rollback(); } catch (SQLException ex) { }
         } finally {
-            try { if (con != null) con.close(); } catch (SQLException ex) { /* Log close error */ }
+            try { if (con != null) con.close(); } catch (SQLException ex) { }
         }
+
         return exito;
     }
 

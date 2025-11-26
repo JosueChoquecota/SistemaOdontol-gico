@@ -5,11 +5,16 @@
 package com.utp.sistemaOdontologo.services;
 
 import com.utp.sistemaOdontologo.connection.ConnectionDataBase;
+import com.utp.sistemaOdontologo.dao.CitaDAO;
 import com.utp.sistemaOdontologo.dao.ContactoDAO;
+import com.utp.sistemaOdontologo.dao.HistoriaCitaDAO;
+import com.utp.sistemaOdontologo.dao.HorarioOdontologoDAO;
 import com.utp.sistemaOdontologo.dao.PacienteDAO;
+import com.utp.sistemaOdontologo.dao.PagoDAO;
 import com.utp.sistemaOdontologo.dtos.CitaDTORequest;
 import com.utp.sistemaOdontologo.dtos.PacienteDTORequest;
 import com.utp.sistemaOdontologo.dtos.PacienteDTOResponse;
+import com.utp.sistemaOdontologo.entities.Cita;
 import com.utp.sistemaOdontologo.entities.Contacto;
 import com.utp.sistemaOdontologo.entities.PacienteDatos;
 import com.utp.sistemaOdontologo.entities.TipoDocumento;
@@ -28,11 +33,20 @@ public class PacienteService {
         private ConnectionDataBase dbConnection;
         private PacienteDAO pacienteDAO;
         private ContactoDAO contactoDAO;
-
+        // NUEVOS DAOS PARA LA ELIMINACIÓN EN CASCADA
+            private final HorarioOdontologoDAO horarioOdontologoDAO;
+            private final CitaDAO citaDAO;
+            private final HistoriaCitaDAO historiaCitaDAO;
+            private final PagoDAO pagoDAO;
     public PacienteService() {
         this.dbConnection = new ConnectionDataBase();
         this.pacienteDAO = new PacienteDAO();
         this.contactoDAO = new ContactoDAO();
+        // ¡¡¡AQUÍ ESTABA EL ERROR!!! TE FALTABAN ESTAS LÍNEAS:
+        this.horarioOdontologoDAO = new HorarioOdontologoDAO();
+        this.citaDAO = new CitaDAO();
+        this.historiaCitaDAO = new HistoriaCitaDAO();
+        this.pagoDAO = new PagoDAO();
     }
     public Integer insert(PacienteDTORequest request) {
         Connection con = null;
@@ -255,41 +269,42 @@ public class PacienteService {
 
     public Boolean deletePaciente(Integer idPaciente) {
     Connection con = null;
-    try {
-        con = dbConnection.getConnection();
-        con.setAutoCommit(false); 
+        boolean exito = false;
 
-        // 1. OBTENER ENTIDAD EXISTENTE para obtener el ID de Contacto
-        PacienteDatos pacienteAEliminar = pacienteDAO.findById(con, idPaciente);
-        if (pacienteAEliminar == null) {
-            throw new Exception("Paciente ID " + idPaciente + " no existe.");
-        }
-        
-        Integer idContactoAEliminar = pacienteAEliminar.getContacto().getIdContacto();
-        if (idContactoAEliminar == null) {
-             throw new Exception("Error de integridad: El paciente no tiene un Contacto válido asociado.");
-        }
-        
-        // 2. ELIMINACIÓN EN CASCADA (Orden Importante para FKs)
-        
-        // A. Eliminar el registro HIJO (PacientesDatos)
-        // Se debe eliminar primero PacientesDatos, ya que este tiene la FK a Contactos.
-        pacienteDAO.delete(con, pacienteAEliminar); 
-        
-        // B. Eliminar el registro PADRE (Contactos)
-        Contacto contactoAEliminar = new Contacto();
-        contactoAEliminar.setIdContacto(idContactoAEliminar);
-        contactoDAO.delete(con, contactoAEliminar);
+        try {
+            con = dbConnection.getConnection();
+            con.setAutoCommit(false); // INICIO TRANSACCIÓN
 
-        con.commit();
-        return true;
-        
-    } catch (Exception e) {
-        System.err.println("❌ ERROR FATAL al eliminar Paciente. Detalle: " + e.getMessage());
-        try { if (con != null) con.rollback(); } catch (SQLException ex) { System.err.println("Rollback Error."); }
-        return false;
-    } finally {
-        try { if (con != null) con.close(); } catch (SQLException ex) { /* Cierra conexión */ }
-    }
+            // 1. BUSCAR Y ELIMINAR CITAS DEL PACIENTE
+            List<Cita> citasDelPaciente = citaDAO.findByIdPaciente(con, idPaciente);
+
+            if (citasDelPaciente != null) {
+                for (Cita c : citasDelPaciente) {
+                    // Borrar hijos de la cita primero
+                    historiaCitaDAO.deleteByCitaId(con, c.getIdCita());
+                    pagoDAO.deleteByCitaId(con, c.getIdCita());
+                    
+                    // Borrar la cita
+                    citaDAO.delete(con, c.getIdCita());
+                }
+            }
+
+            // 2. ELIMINAR AL PACIENTE
+            // (Aquí llamas a tu método DAO normal de eliminar paciente)
+            pacienteDAO.delete(con, idPaciente);
+            
+            // Opcional: Si deseas borrar el Contacto asociado al paciente, hazlo aquí también.
+
+            con.commit(); // CONFIRMAR
+            exito = true;
+
+        } catch (Exception e) {
+            System.err.println("❌ Error al eliminar paciente: " + e.getMessage());
+            try { if (con != null) con.rollback(); } catch (SQLException ex) { }
+        } finally {
+            try { if (con != null) con.close(); } catch (SQLException ex) { }
+        }
+
+        return exito;
 }
 }

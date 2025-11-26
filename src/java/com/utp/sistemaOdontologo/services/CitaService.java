@@ -242,43 +242,45 @@ public class CitaService {
         }
     }
     
-    public Boolean completarCitaYPago(Integer idCita) {
-        if (idCita == null || idCita <= 0) {
-            throw new IllegalArgumentException("ID de Cita inválido.");
+        public Boolean completarCitaYPago(Integer idCita) {
+            if (idCita == null || idCita <= 0) {
+                throw new IllegalArgumentException("ID de Cita inválido.");
+            }
+
+            Connection con = null;
+            Boolean exito = false;
+
+            try {
+                con = dbConnection.getConnection();
+                con.setAutoCommit(false); // INICIO TRANSACCIÓN
+
+                // === REGLA DE NEGOCIO ===
+                // Aquí definimos "a fuego" que completar significa ID 4
+                final int ID_ESTADO_COMPLETADA = 4; 
+                final String TEXTO_HISTORIAL = "Cita marcada como Completada (Atendida).";
+                final String ESTADO_PAGO_FINAL = "COMPLETADO";
+
+                // 1. ACTUALIZAR ESTADO EN TABLA CITAS
+                citaDAO.updateEstado(con, idCita, ID_ESTADO_COMPLETADA);
+
+                // 2. ACTUALIZAR ESTADO EN TABLA PAGOS
+                // (Suponiendo que al terminar la cita, el cliente paga)
+                pagoDAO.updateEstadoPago(con, idCita, ESTADO_PAGO_FINAL);
+
+                // 3. REGISTRAR EN HISTORIAL (Auditoría)
+                historiaCitaDAO.insert(con, idCita, ID_ESTADO_COMPLETADA, TEXTO_HISTORIAL);
+
+                con.commit(); // CONFIRMA TRANSACCIÓN
+                exito = true;
+
+            } catch (Exception e) {
+                System.err.println("❌ ERROR FATAL al completar Cita. Detalle: " + e.getMessage());
+                try { if (con != null) con.rollback(); } catch (SQLException ex) { }
+            } finally {
+                try { if (con != null) con.close(); } catch (SQLException ex) { }
+            }
+            return exito;
         }
-
-        Connection con = null;
-        Boolean exito = false;
-
-        try {
-            con = dbConnection.getConnection();
-            con.setAutoCommit(false); // 1. INICIA TRANSACCIÓN
-
-            final String ESTADO_CITA_FINAL = "Completada";
-            final int ID_ESTADO_CITA_FINAL = 4;
-            final String ESTADO_PAGO_FINAL = "COMPLETADO";
-
-            // 1. ACTUALIZAR ESTADO EN TABLA CITAS (A ID=4)
-            // Necesitas un método en CitaDAO para actualizar solo el id_estado
-            citaDAO.updateEstado(con, idCita, ID_ESTADO_CITA_FINAL);
-
-            // 2. ACTUALIZAR ESTADO EN TABLA PAGOS (A 'COMPLETADO')
-            pagoDAO.updateEstadoPago(con, idCita, ESTADO_PAGO_FINAL);
-
-            // 3. REGISTRAR EN HISTORIAL (Auditoría)
-            historiaCitaDAO.insert(con, idCita, ID_ESTADO_CITA_FINAL, "Cita finalizada y pago completado.");
-
-            con.commit(); // CONFIRMA TRANSACCIÓN
-            exito = true;
-
-        } catch (Exception e) {
-            System.err.println("❌ ERROR FATAL al completar Cita. Detalle: " + e.getMessage());
-            try { if (con != null) con.rollback(); } catch (SQLException ex) { System.err.println("Rollback Error."); }
-        } finally {
-            try { if (con != null) con.close(); } catch (SQLException ex) { /* Cierra conexión */ }
-        }
-        return exito;
-    }
     /**
      * Método exclusivo para el Dashboard Administrativo.
      * Registra una cita usando IDs de pacientes y doctores ya existentes.

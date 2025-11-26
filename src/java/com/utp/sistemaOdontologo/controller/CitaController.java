@@ -32,33 +32,24 @@ public class CitaController extends HttpServlet {
             throws ServletException, IOException {
 
         String operacion = request.getParameter("operacion");
-        if (operacion == null) {
-            operacion = "listar_citas";
-        }
+        if (operacion == null) operacion = "listar_citas";
 
         try {
             switch (operacion) {
-                case "registrar_cita":
-                    registrarCita(request, response);
-                    break;
-                case "actualizar_cita":
-                    actualizarCita(request, response);
-                    break;
-                case "eliminar_cita":
-                    eliminarCita(request, response);
-                    break;
-                case "buscar_id":
-                    buscarPorId(request, response);
-                    break;
-                case "listar_citas":
-                    listarCitas(request, response);
-                    break;
-                case "obtener_citas_json":
-                    obtenerCitasJson(request, response);
-                    break;
-                default:
-                    listarCitas(request, response);
-                    break;
+                case "registrar_cita": registrarCita(request, response); break;
+                case "actualizar_cita": actualizarCita(request, response); break;
+                case "eliminar_cita": eliminarCita(request, response); break;
+                
+                // CASO CLAVE PARA AJAX
+                case "completar_cita": completarCita(request, response); break;
+                
+                case "buscar_id": buscarPorId(request, response); break;
+                case "listar_citas": listarCitas(request, response); break;
+                
+                // CASO CLAVE PARA CALENDARIO
+                case "obtener_citas_json": obtenerCitasJson(request, response); break; 
+                
+                default: listarCitas(request, response); break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,45 +79,39 @@ public class CitaController extends HttpServlet {
             request.getRequestDispatcher("Citas.jsp").forward(request, response);
         }
     }
+    // =========================================================
+    // JSON PARA FULLCALENDAR
+    // =========================================================
     private void obtenerCitasJson(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        // 1. Obtener tus citas normales
+        
         List<CitaDTOResponse> lista = citaService.listAll();
-
-        // 2. Convertirlas al formato de FullCalendar
         List<Map<String, Object>> eventos = new ArrayList<>();
 
         for (CitaDTOResponse c : lista) {
             Map<String, Object> evento = new HashMap<>();
-
-            evento.put("id", c.getIdCita());
-
-            // Título: Qué se ve en la cajita del calendario
-            // Ej: "Juan Perez - Limpieza Dental"
+            
+            // IMPORTANTE: ID como String para que JS lo encuentre
+            evento.put("id", String.valueOf(c.getIdCita())); 
+            
             String titulo = "";
             if (c.getPaciente() != null) {
-                titulo += c.getPaciente().getNombresPaciente() + " " + c.getPaciente().getApellidosPaciente();
+                // Ajusta según tu DTO (getNombresPaciente o getNombre)
+                titulo += c.getPaciente().getNombresPaciente(); 
             }
             titulo += " - " + c.getMotivo();
             evento.put("title", titulo);
-
-            // Fecha y Hora de Inicio (ISO8601: "2025-11-25T10:00:00")
-            // Asumimos que c.getHoraCita() devuelve algo como "10:00:00" o "10:00"
+            
+            // Fecha y Hora
             String fechaHora = c.getFechaCita().toString() + "T" + c.getHoraCita();
-            // Pequeña corrección si la hora viene sin segundos (ej: 10:00 -> 10:00:00)
-            if (c.getHoraCita().length() == 5) {
-                fechaHora += ":00";
-            }
+            if (c.getHoraCita().length() == 5) fechaHora += ":00";
             evento.put("start", fechaHora);
-
-            // (Opcional) Duración estimada 30 min si no tienes hora fin
-            // FullCalendar lo calcula solo si no lo pones, pero se ve mejor si lo tiene.
-
-            // Colores según estado
+            
+            // Colores
             String estado = (c.getEstado() != null) ? c.getEstado().toUpperCase() : "PENDIENTE";
             switch (estado) {
                 case "ATENDIDO":
+                case "COMPLETADA": // Verifica cómo lo guardas en BD (ID 4)
                     evento.put("backgroundColor", "#198754"); // Verde
                     evento.put("borderColor", "#198754");
                     break;
@@ -138,18 +123,34 @@ public class CitaController extends HttpServlet {
                 default:
                     evento.put("backgroundColor", "#ffc107"); // Amarillo
                     evento.put("borderColor", "#ffc107");
-                    evento.put("textColor", "#000000"); // Texto negro para contraste
+                    evento.put("textColor", "#000000");
                     break;
             }
-
             eventos.add(evento);
         }
 
-        // 3. Enviar JSON
         String json = new Gson().toJson(eventos);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
+    }
+
+    // =========================================================
+    // COMPLETAR CITA (AJAX)
+    // =========================================================
+    private void completarCita(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            Integer idCita = Integer.parseInt(request.getParameter("idCita"));
+            if (citaService.completarCitaYPago(idCita)) {
+                // Responde OK (200) sin cuerpo, suficiente para AJAX
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No se pudo completar");
+            }
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 
     // =================================================================

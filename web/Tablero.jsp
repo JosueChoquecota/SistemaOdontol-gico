@@ -14,20 +14,17 @@
     <style>
         /* =========================================
            ESTILOS SEGUROS PARA EL TABLERO
-           (Reemplazan a doctorTablero.css)
            ========================================= */
 
-        /* Contenedor derecho que ocupa el espacio restante */
         #page-content-wrapper {
             flex-grow: 1;
             height: 100vh;
-            overflow-y: auto; /* Scroll solo en el contenido, sidebar fijo */
+            overflow-y: auto; 
             background-color: #fff;
         }
 
-        /* Estilos para los Botones Superiores (Reemplazo de btn-verde) */
         .btn-custom-teal {
-            background-color: #20c997; /* Color similar al diseño */
+            background-color: #20c997; 
             color: white;
             border: none;
             padding: 8px 20px;
@@ -41,7 +38,6 @@
             color: white;
         }
 
-        /* Estilos para los Botones de Navegación (Reemplazo de btn-gris) */
         .btn-custom-grey {
             background-color: #6c757d;
             color: white;
@@ -54,7 +50,6 @@
             color: white;
         }
 
-        /* Título del mes */
         .titulo-mes {
             font-size: 1.5rem;
             font-weight: bold;
@@ -63,7 +58,6 @@
             text-transform: uppercase;
         }
 
-        /* Contenedor de la cabecera del calendario */
         .calendar-header {
             display: flex;
             flex-wrap: wrap;
@@ -73,7 +67,7 @@
             gap: 10px;
         }
 
-        /* Ajuste para la columna de hora personalizada (script) */
+        /* Ajuste para la columna de hora personalizada */
         .custom-time-right {
             position: absolute;
             right: 0;
@@ -96,7 +90,7 @@
 
 <body>
 
-    <%-- CONTENEDOR FLEX PRINCIPAL: Sidebar a la izquierda, Contenido a la derecha --%>
+    <%-- CONTENEDOR FLEX PRINCIPAL --%>
     <div class="d-flex" id="wrapper">
 
     <%-- 1. SIDEBAR --%>
@@ -105,13 +99,13 @@
     <%-- 2. CONTENIDO DERECHO --%>
     <div id="page-content-wrapper">
         
-        <%-- A. BARRA SUPERIOR (Siempre va primero y sola) --%>
+        <%-- A. BARRA SUPERIOR --%>
         <%@ include file="/WEB-INF/jspf/topBar.jspf" %>
         
-        <%-- B. CONTENIDO ESPECÍFICO DEL TABLERO (Con padding) --%>
+        <%-- B. CONTENIDO ESPECÍFICO DEL TABLERO --%>
         <div class="container-fluid px-4">
             
-            <%-- Fila de Botones de Estado (Debajo del TopBar) --%>
+            <%-- Fila de Botones de Estado --%>
             <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
                 <button class="btn-custom-teal">Confirmada</button>
                 <button class="btn-custom-teal">Atendida</button>
@@ -146,13 +140,59 @@
         </div> <%-- Fin container-fluid --%>
         
     </div> <%-- Fin page-content-wrapper --%>
-</div> <%-- Fin wrapper --%>
+    </div> <%-- Fin wrapper --%>
+
+    <%-- ========================================================== --%>
+    <%-- MODAL: DETALLE DE CITA (Para Acciones Rápidas)             --%>
+    <%-- ========================================================== --%>
+    <div class="modal fade" id="modalDetalleCita" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-dark">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>Detalle de Cita
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="fw-bold text-muted small">PACIENTE / MOTIVO</label>
+                        <p class="fs-5 text-dark fw-bold mb-0" id="modalTitulo">Cargando...</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="fw-bold text-muted small">HORA INICIO</label>
+                            <p class="fs-6" id="modalInicio">--:--</p>
+                        </div>
+                        <div class="col-6">
+                            <label class="fw-bold text-muted small">ESTADO ACTUAL</label>
+                            <div id="modalEstadoBadge"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <%-- Formulario AJAX para completar la cita --%>
+                    <form action="citas" method="POST" id="formCompletar">
+                        <input type="hidden" name="operacion" value="completar_cita">
+                        <input type="hidden" name="idCita" id="inputIdCita">
+                        
+                        <button type="button" class="btn btn-link text-secondary text-decoration-none me-2" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success fw-bold px-4">
+                            <i class="bi bi-check-circle-fill me-2"></i>Terminar Cita
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <%-- SCRIPTS --%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         let calendar;
         
-        // Función para ajustar la columna de tiempo (tu lógica original)
+        // Función para ajustar la columna de tiempo (Visual)
         function createRightTimeColumn() {
             const existing = document.querySelector('.custom-time-right');
             if (existing) existing.remove();
@@ -183,7 +223,6 @@
                 
                 scrollContainer.style.position = 'relative'; 
                 scrollContainer.appendChild(rightColumn);
-                
             }, 100);
         }
 
@@ -197,20 +236,56 @@
                 allDaySlot: false,
                 height: 'auto',
                 contentHeight: 600,
-
-                // === AQUÍ ESTÁ EL CAMBIO ===
-                // Apunta al Servlet con la operación nueva
+                
+                // Fuente de datos (Tu Servlet)
                 events: 'citas?operacion=obtener_citas_json', 
+                
+                // === ACCIÓN AL HACER CLIC ===
+                eventClick: function(info) {
+                    const evento = info.event;
+                    const idCita = evento.id;
+                    const titulo = evento.title;
+                    const fechaInicio = evento.start ? evento.start.toLocaleString() : 'Sin fecha';
+                    const color = evento.backgroundColor;
 
-                // Resto de tu configuración...
+                    // Llenar el Modal
+                    const elTitulo = document.getElementById('modalTitulo');
+                    const elInicio = document.getElementById('modalInicio');
+                    const elInput = document.getElementById('inputIdCita');
+                    const elBadge = document.getElementById('modalEstadoBadge');
+
+                    if(elTitulo) elTitulo.innerText = titulo;
+                    if(elInicio) elInicio.innerText = fechaInicio;
+                    if(elInput) elInput.value = idCita;
+                    
+                    if(elBadge) {
+                        elBadge.innerHTML = `<span class="badge" style="background-color: ${color}; color: #fff;">Estado</span>`;
+                    }
+
+                    // Abrir el Modal
+                    const modalEl = document.getElementById('modalDetalleCita');
+                    if(modalEl) {
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    }
+                },
+
                 slotLabelFormat: {
                     hour: 'numeric',
                     hour12: true,
                     meridiem: 'short'
                 },
-                // ... (mantén tus eventos datesSet, viewDidMount, etc.)
+                dayHeaderFormat: {
+                    weekday: 'short',
+                    day: 'numeric'
+                },
+                slotMinTime: '09:00:00',
+                slotMaxTime: '18:00:00',
+                expandRows: true,
+                
                 datesSet: function(info) {
-                    document.getElementById('currentMonth').innerText = info.view.title;
+                    const titleEl = document.getElementById('currentMonth');
+                    if(titleEl) titleEl.innerText = info.view.title;
                     createRightTimeColumn();
                 },
                 viewDidMount: function(info) {
@@ -223,20 +298,74 @@
             
             calendar.render();
             
-            // VINCULAR BOTONES PERSONALIZADOS
-            document.getElementById('btnPrev').addEventListener('click', () => calendar.prev());
-            document.getElementById('btnNext').addEventListener('click', () => calendar.next());
-            document.getElementById('btnToday').addEventListener('click', () => calendar.today());
+            // Botones de navegación
+            const btnPrev = document.getElementById('btnPrev');
+            if(btnPrev) btnPrev.addEventListener('click', () => calendar.prev());
             
-            document.getElementById('btnMonth').addEventListener('click', () => {
+            const btnNext = document.getElementById('btnNext');
+            if(btnNext) btnNext.addEventListener('click', () => calendar.next());
+            
+            const btnToday = document.getElementById('btnToday');
+            if(btnToday) btnToday.addEventListener('click', () => calendar.today());
+            
+            const btnMonth = document.getElementById('btnMonth');
+            if(btnMonth) btnMonth.addEventListener('click', () => {
                 calendar.changeView('dayGridMonth');
-                // Ocultar columna extra en vista mensual
                 const col = document.querySelector('.custom-time-right');
                 if(col) col.style.display = 'none';
             });
             
-            document.getElementById('btnWeek').addEventListener('click', () => calendar.changeView('timeGridWeek'));
-            document.getElementById('btnDay').addEventListener('click', () => calendar.changeView('timeGridDay'));
+            const btnWeek = document.getElementById('btnWeek');
+            if(btnWeek) btnWeek.addEventListener('click', () => calendar.changeView('timeGridWeek'));
+            
+            const btnDay = document.getElementById('btnDay');
+            if(btnDay) btnDay.addEventListener('click', () => calendar.changeView('timeGridDay'));
+            
+            
+            // =========================================================
+            // LÓGICA AJAX: TERMINAR LA CITA Y CAMBIAR COLOR AL INSTANTE
+            // =========================================================
+            const formCompletar = document.getElementById('formCompletar');
+            
+            if (formCompletar) {
+                formCompletar.addEventListener('submit', function(e) {
+                    e.preventDefault(); // 1. Evita que la página se recargue
+
+                    const datos = new URLSearchParams(new FormData(this));
+
+                    // 2. Envia la petición al servidor
+                    fetch('citas', { 
+                        method: 'POST',
+                        body: datos
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // 3. ÉXITO: Ocultar Modal
+                            const modalElemento = document.getElementById('modalDetalleCita');
+                            const modalInstancia = bootstrap.Modal.getInstance(modalElemento);
+                            modalInstancia.hide();
+
+                            // 4. CAMBIAR COLOR VISUALMENTE (Sin recargar todo)
+                            const idCita = document.getElementById('inputIdCita').value;
+                            const evento = calendar.getEventById(idCita);
+                            
+                            if (evento) {
+                                // Pinta la cita de VERDE
+                                evento.setProp('backgroundColor', '#198754'); 
+                                evento.setProp('borderColor', '#198754');
+                                evento.setProp('textColor', '#ffffff');
+                            }
+                            
+                        } else {
+                            alert("Hubo un error al conectar con el servidor.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error técnico al completar la cita.");
+                    });
+                });
+            }
         });
     </script>
 </body>

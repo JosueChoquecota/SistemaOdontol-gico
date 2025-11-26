@@ -56,6 +56,36 @@ public class CitaDAO implements ICitaRepository {
         }
         return idCitaGenerado;
     }
+    public List<Cita> findByIdTrabajador(Connection con, Integer idTrabajador) throws SQLException {
+        List<Cita> lista = new ArrayList<>();
+        
+        // Consulta simple, no necesitamos JOINs complejos porque el objetivo principal 
+        // es obtener los IDs de las citas para eliminarlas.
+        String sql = "SELECT * FROM Citas WHERE id_trabajador = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idTrabajador);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Cita cita = new Cita();
+                    
+                    // Mapeamos lo esencial (El ID es lo más importante para el delete)
+                    cita.setIdCita(rs.getInt("id_cita"));
+                    cita.setMotivo(rs.getString("motivo"));
+                    cita.setFechaCita(rs.getDate("fecha").toLocalDate());
+                    
+                    // Si necesitas más datos, puedes mapearlos aquí, 
+                    // pero para el proceso de eliminación, con el ID basta.
+                    
+                    lista.add(cita);
+                }
+            }
+        }
+        return lista;
+    }
+    
+    
     @Override
     public List<Cita> listAll(Connection con) throws SQLException {
         List<Cita> lista = new ArrayList<>();
@@ -135,6 +165,23 @@ public class CitaDAO implements ICitaRepository {
 
                 return rowsAffected > 0;
             }
+    }
+      public List<Cita> findByIdPaciente(Connection con, Integer idPaciente) throws SQLException {
+        List<Cita> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Citas WHERE id_paciente = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idPaciente);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Cita c = new Cita();
+                    c.setIdCita(rs.getInt("id_cita"));
+                    // Solo necesitamos el ID para eliminar
+                    lista.add(c);
+                }
+            }
+        }
+        return lista;
     }
     @Override
     public Cita findById(Connection con, Integer idCita) throws SQLException {
