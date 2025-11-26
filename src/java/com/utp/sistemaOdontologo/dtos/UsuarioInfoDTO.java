@@ -10,15 +10,15 @@ package com.utp.sistemaOdontologo.dtos;
  */
 public class UsuarioInfoDTO {
     private Integer idUsuario;
-    private String username;
+    private String usuario;
     private String estado;
 
     public UsuarioInfoDTO() {
     }
 
-    public UsuarioInfoDTO(Integer idUsuario, String username, String estado) {
+    public UsuarioInfoDTO(Integer idUsuario, String usuario, String estado) {
         this.idUsuario = idUsuario;
-        this.username = username;
+        this.usuario = usuario;
         this.estado = estado;
     }
 
@@ -30,12 +30,12 @@ public class UsuarioInfoDTO {
         this.idUsuario = idUsuario;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getEstado() {
@@ -45,7 +45,5 @@ public class UsuarioInfoDTO {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-    
-    
+
 }

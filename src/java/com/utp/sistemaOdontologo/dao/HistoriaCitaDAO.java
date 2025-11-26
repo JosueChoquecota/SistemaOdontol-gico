@@ -63,7 +63,17 @@ public class HistoriaCitaDAO implements IHistorialCitaRepository {
             ps.setInt(1, idHistorial);
             return ps.executeUpdate() > 0;
         }
+    }
+    
+    // En HistoriaCitaDAO.java
+    public void deleteByCitaId(Connection con, Integer idCita) throws SQLException {
+        // Borra TODAS las filas de historial que pertenezcan a esta cita
+        String sql = "DELETE FROM HistoriaCita WHERE id_cita = ?";
 
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idCita);
+            ps.executeUpdate();
+        }
     }
     @Override
     public List<HistorialCita> listAll(Connection con) throws SQLException {

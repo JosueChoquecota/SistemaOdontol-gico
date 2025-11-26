@@ -94,7 +94,7 @@ public class CitaService {
             String horaLegible = horarioInfoDAO.findHoraLegibleById(con, request.getIdHorario());
             
             // Mapeo final
-            response = CitaMapper.toResponseDTO(citaParaInsertar, horaLegible, nombreDoctor, nombrePaciente);
+            response = CitaMapper.toResponseDTO(citaParaInsertar);
             
         } catch (Exception e) {
             System.err.println("❌ ERROR FATAL en creación de Cita. Detalle: " + e.getMessage());
@@ -130,7 +130,7 @@ public class CitaService {
             String nombrePaciente = cita.getPaciente().getNombres() + " " + cita.getPaciente().getApellidos();
             String horaLegible = cita.getHorario().getHorarioInicio().toString(); 
             
-            CitaDTOResponse response = CitaMapper.toResponseDTO(cita, horaLegible, nombreDoctor, nombrePaciente);
+            CitaDTOResponse response = CitaMapper.toResponseDTO(cita);
             listaResponse.add(response);
         }     
     } catch (Exception e) {
@@ -153,13 +153,17 @@ public class CitaService {
                 con = dbConnection.getConnection();
                 con.setAutoCommit(false); 
 
-                // 1. ELIMINAR REGISTROS HIJOS (Pagos, Historial)
-                historiaCitaDAO.delete(con, idCita);
-                pagoDAO.deleteByCitaId(con, idCita); // <-- CORRECTO: Se ejecuta antes del padre.
+                // 1. ELIMINAR REGISTROS HIJOS PRIMERO (Orden correcto)
 
-                // 2. ELIMINAR REGISTRO PADRE
+                // A. Eliminar Historial (CORREGIDO)
+                historiaCitaDAO.deleteByCitaId(con, idCita); 
+
+                // B. Eliminar Pagos (Asegúrate que PagoDAO también tenga deleteByCitaId)
+                pagoDAO.deleteByCitaId(con, idCita); 
+
+                // 2. ELIMINAR REGISTRO PADRE (Ahora sí dejará borrar)
                 citaDAO.delete(con, idCita);
-                
+
                 con.commit();
                 exito = true;
 
@@ -192,7 +196,7 @@ public class CitaService {
             String horaLegible = horarioInfoDAO.findHoraLegibleById(con, cita.getHorario().getIdHorario());
             
             // 3. Mapeo final a DTO de respuesta
-            return CitaMapper.toResponseDTO(cita, horaLegible, nombreDoctor, nombrePaciente);
+            return CitaMapper.toResponseDTO(cita);
 
         } catch (Exception e) {
             System.err.println("❌ Error al buscar cita ID " + idCita + ": " + e.getMessage());
@@ -273,6 +277,78 @@ public class CitaService {
         } finally {
             try { if (con != null) con.close(); } catch (SQLException ex) { /* Cierra conexión */ }
         }
+        return exito;
+    }
+    /**
+     * Método exclusivo para el Dashboard Administrativo.
+     * Registra una cita usando IDs de pacientes y doctores ya existentes.
+     */
+    public boolean insertarCitaAdministrativa(CitaDTORequest request) {
+        Connection con = null;
+        boolean exito = false;
+
+        try {
+            con = dbConnection.getConnection();
+            con.setAutoCommit(false); // INICIO DE TRANSACCIÓN
+
+            // 1. VALIDACIÓN BÁSICA
+            if (request.getIdPaciente() == null || request.getIdPaciente() <= 0) {
+                throw new Exception("Debe seleccionar un paciente válido.");
+            }
+            if (request.getIdTrabajador() == null || request.getIdTrabajador() <= 0) {
+                throw new Exception("Debe seleccionar un odontólogo.");
+            }
+
+            // 2. OBTENER ID DEL ESTADO "PENDIENTE"
+            Integer idEstado = estadoDAO.findIdByNombre(con, "Pendiente");
+            if (idEstado == null) idEstado = 1; // Valor por defecto si falla la búsqueda
+
+            // 3. RESOLVER EL ID DEL HORARIO (CRUCIAL PARA EL MODAL)
+            // El modal envía una Hora (LocalTime), pero la BD necesita un ID (id_horario)
+            if (request.getHoraCita() != null) {
+                // Buscamos si existe ese horario en la BD para obtener su ID
+                Integer idHorarioEncontrado = horarioDAO.findIdByHoraInicio(con, request.getHoraCita());
+                
+                if (idHorarioEncontrado != null) {
+                    request.setIdHorario(idHorarioEncontrado);
+                } else {
+                    // Opcional: Si el horario no existe en la tabla maestra, lanzamos error
+                    throw new Exception("La hora seleccionada (" + request.getHoraCita() + ") no está registrada en los horarios del sistema.");
+                }
+            }
+
+            // 4. MAPEAR Y PREPARAR ENTIDAD
+            Cita cita = CitaMapper.toEntity(request, idEstado);
+            
+            // Aseguramos que los IDs vengan correctos del DTO
+            cita.getPaciente().setIdPaciente(request.getIdPaciente());
+            cita.getTrabajador().setIdTrabajador(request.getIdTrabajador());
+
+            // 5. INSERTAR LA CITA
+            Integer idCitaGenerado = citaDAO.insert(con, cita);
+
+            // 6. INSERTAR EN HISTORIAL (AUDITORÍA)
+            historiaCitaDAO.insert(con, 
+                                   idCitaGenerado, 
+                                   idEstado, 
+                                   "Cita programada desde panel administrativo.");
+
+            // 7. INICIALIZAR PAGO (Como PENDIENTE)
+            // Asumimos pago en efectivo o mostrador por defecto
+            String metodoPago = (request.getMetodoPago() != null) ? request.getMetodoPago() : "EFECTIVO";
+            pagoDAO.insert(con, idCitaGenerado, metodoPago, "PENDIENTE");
+
+            con.commit(); // CONFIRMAR CAMBIOS
+            exito = true;
+
+        } catch (Exception e) {
+            System.err.println("❌ Error en insertarCitaAdministrativa: " + e.getMessage());
+            try { if (con != null) con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            exito = false;
+        } finally {
+            try { if (con != null) con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+        }
+
         return exito;
     }
 }

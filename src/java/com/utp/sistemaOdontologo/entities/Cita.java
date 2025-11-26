@@ -93,7 +93,6 @@ public class Cita {
     public void setMotivacion(String motivacion) {
         this.motivacion = motivacion;
     }
- 
-   
+
     
 }

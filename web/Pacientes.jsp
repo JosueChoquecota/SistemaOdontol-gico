@@ -1,115 +1,277 @@
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Dashboard | Lista de Pacientes</title>
+    <title>Gesti√≥n de Pacientes</title>
     
-    <%-- INCLUIR STYLES.JSPF AQUÕ --%>
+    <%-- ESTILOS GLOBALES --%>
     <%@ include file="/WEB-INF/jspf/styles.jspf" %> 
-
+    
     <style>
-        /* CSS MÌnimo y necesario para la barra lateral (debe ir en un archivo CSS externo para producciÛn) */
-        .bg-teal {
-            /* Usando un color turquesa aproximado al diseÒo */
-            background-color: #008080 !important; 
-        }
-        .active-link {
-            /* Estilo para la pestaÒa activa (Pacientes) */
-            background-color: rgba(255, 255, 255, 0.15); 
-            border-radius: 5px;
-        }
-        #wrapper {
-            /* El contenedor principal debe forzar el alto de la pantalla */
-            min-height: 100vh; 
-        }
-        /* Esto asegura que el sidebar tenga un ancho fijo y el contenido se adapte */
-        #page-content-wrapper {
-            flex-grow: 1; 
-            min-width: 0;
-        }
+        /* Estilos para diferenciar visualmente el modo Edici√≥n */
+        .modal-header.bg-warning { color: #000 !important; }
+        .modal-header.bg-teal { background-color: #008080; color: white; }
     </style>
 </head>
 <body>
     
     <div class="d-flex" id="wrapper">
         
+        <%-- 1. SIDEBAR --%>
         <%@ include file="/WEB-INF/jspf/sideBar.jspf" %>
         
-        <div id="page-content-wrapper" class="p-4 w-100">
+        <%-- 2. CONTENIDO PRINCIPAL --%>
+        <div id="page-content-wrapper" class="w-100">
             
-            <header class="d-flex justify-content-between align-items-center mb-4">
-                <button class="btn btn-sm btn-secondary">Help</button>
-                <span class="user me-2">Hola, Doctor!</span>
-            </header>
-            
-            <section class="content">
-                <h1 class="mb-4">Lista de Pacientes</h1>
+            <%-- A. BARRA SUPERIOR --%>
+            <%@ include file="/WEB-INF/jspf/topBar.jspf" %> 
 
-                <div class="card shadow-sm mb-5">
-                    <div class="card-header bg-light">
-                        <h3 class="h6 mb-0">Registrar Pacientes</h3>
+            <%-- B. CONTENIDO --%>
+            <div class="container-fluid p-4"> 
+                
+                <section class="content">
+                    
+                    <%-- CABECERA --%>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h1 class="h3 mb-0 text-dark fw-bold">Pacientes</h1>
+                            <p class="text-muted mb-0">Administra la informaci√≥n de tus pacientes aqu√≠.</p>
+                        </div>
+                        
+                        <%-- BOT√ìN NUEVO (Abre modal vac√≠o) --%>
+                        <button type="button" class="btn btn-success shadow-sm px-4 py-2" data-bs-toggle="modal" data-bs-target="#modalGestionPaciente">
+                            <i class="bi bi-person-plus-fill me-2"></i>Nuevo Paciente
+                        </button>
+                        
+                        <%-- BOT√ìN OCULTO PARA ACTIVAR EDICI√ìN AUTOM√ÅTICA (TRUCO INFALIBLE) --%>
+                        <button id="btnTriggerEdit" type="button" style="display: none;" data-bs-toggle="modal" data-bs-target="#modalGestionPaciente"></button>
                     </div>
-                    <div class="card-body">
-                        <form id="pacienteForm" action="trabajadores?operacion=registrar_paciente" method="POST"> 
-                            <input type="hidden" name="operacion" value="registrar_paciente">
-                            
-                            <div class="row g-3">
-                                
-                                <%-- FILA 1: Nombre, Apellido, DNI, TelÈfono --%>
-                                <div class="col-md-3">
-                                    <label for="nombresPaciente" class="form-label small">Nombre:</label>
-                                    <input type="text" name="nombresPaciente" class="form-control" placeholder="Primer Nombre" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="apellidosPaciente" class="form-label small">Apellido:</label>
-                                    <input type="text" name="apellidosPaciente" class="form-control" placeholder="Apellido" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="documento" class="form-label small">DNI / RUC:</label>
-                                    <input type="text" name="documento" class="form-control" placeholder="Documento" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="telefono" class="form-label small">TelÈfono:</label>
-                                    <input type="text" name="telefono" class="form-control" placeholder="TelÈfono" required>
-                                </div>
 
-                                <%-- FILA 2: Correo, Sexo, DirecciÛn, BotÛn --%>
-                                <div class="col-md-3">
-                                    <label for="correo" class="form-label small">Correo:</label>
-                                    <input type="email" name="correo" class="form-control" placeholder="Correo" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="sexo" class="form-label small">Sexo:</label>
-                                    <select name="sexo" class="form-select" required>
-                                        <option value="">Seleccionar</option>
-                                        <option value="F">Femenino</option>
-                                        <option value="M">Masculino</option>
-                                        <option value="OTRO">Otro</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="direccion" class="form-label small">DirecciÛn:</label>
-                                    <input type="text" name="direccion" class="form-control" placeholder="DirecciÛn">
-                                </div>
-                                
-                                <%-- BotÛn al final de la fila --%>
-                                <div class="col-md-3 d-flex align-items-end justify-content-end">
-                                    <button type="submit" class="btn btn-info w-100">Reservar</button>
-                                </div>
+                    <%-- MENSAJES DE ALERTA --%>
+                    <c:if test="${not empty mensaje}">
+                        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>${mensaje}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>${error}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </c:if>
+
+                    <!-- ============================================= -->
+                    <!-- TABLA DE PACIENTES                            -->
+                    <!-- ============================================= -->
+                    <div class="card shadow-sm border-0 rounded-3">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="ps-4 py-3">ID</th>
+                                            <th>Paciente</th>
+                                            <th>DNI / RUC</th>
+                                            <th>Contacto</th>
+                                            <th class="text-end pe-4">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="p" items="${listaPacientes}">
+                                            <tr>
+                                                <td class="ps-4 fw-bold text-muted">#${p.idPaciente}</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 40px; height: 40px; font-weight: bold;">
+                                                            ${p.nombresPaciente.substring(0,1)}
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-bold text-dark">${p.nombresPaciente} ${p.apellidosPaciente}</div>
+                                                            <small class="text-muted text-uppercase">${p.sexo eq 'M' ? 'Masculino' : (p.sexo eq 'F' ? 'Femenino' : 'Otro')}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span class="badge bg-light text-dark border">${p.documento}</span></td>
+                                                <td>
+                                                    <div class="d-flex flex-column small">
+                                                        <span><i class="bi bi-telephone me-2 text-muted"></i>${p.telefono}</span>
+                                                        <span><i class="bi bi-envelope me-2 text-muted"></i>${p.correo}</span>
+                                                    </div>
+                                                </td>
+                                                
+                                                <td class="text-end pe-4">
+                                                    <div class="btn-group">
+                                                        <%-- BOT√ìN EDITAR: Llama al controlador --%>
+                                                        <a href="pacientes?operacion=buscar_id&id=${p.idPaciente}" 
+                                                           class="btn btn-sm btn-outline-primary" 
+                                                           data-bs-toggle="tooltip" title="Editar Informaci√≥n">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+
+                                                        <button onclick="confirmarEliminacion(${p.idPaciente})" 
+                                                                class="btn btn-sm btn-outline-danger" 
+                                                                data-bs-toggle="tooltip" title="Eliminar">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                        
+                                        <c:if test="${empty listaPacientes}">
+                                            <tr>
+                                                <td colspan="5" class="text-center py-5">
+                                                    <div class="text-muted opacity-50">
+                                                        <i class="bi bi-people display-1"></i>
+                                                        <p class="mt-2">No se encontraron pacientes.</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:if>
+                                    </tbody>
+                                </table>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
 
-                <div class="table-box">
-                    <h3>Pacientes</h3>
-                    <p>Tabla de pacientes debe ser cargada aquÌ.</p>
+                </section>
+            </div> 
+        </div> 
+    </div> 
+
+    <!-- ================================================================= -->
+    <!-- MODAL UNIVERSAL (SIRVE PARA REGISTRAR Y PARA ACTUALIZAR)          -->
+    <!-- ================================================================= -->
+    <div class="modal fade" id="modalGestionPaciente" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                
+                <div class="modal-header ${pacienteEditar != null ? 'bg-warning' : 'bg-teal'} text-white">
+                    <h5 class="modal-title fw-bold">
+                        <c:choose>
+                            <c:when test="${pacienteEditar != null}">
+                                <i class="bi bi-pencil-square me-2"></i>Editar Paciente #${pacienteEditar.idPaciente}
+                            </c:when>
+                            <c:otherwise>
+                                <i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro
+                            </c:otherwise>
+                        </c:choose>
+                    </h5>
+                    
+                    <c:choose>
+                        <c:when test="${pacienteEditar != null}">
+                             <a href="pacientes" class="btn-close" aria-label="Close"></a>
+                        </c:when>
+                        <c:otherwise>
+                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
-            </section>
+                
+                <div class="modal-body p-4">
+                    <form action="pacientes" method="POST"> 
+                        <input type="hidden" name="operacion" value="${pacienteEditar != null ? 'actualizar_paciente' : 'registrar_paciente'}">
+                        
+                        <c:if test="${pacienteEditar != null}">
+                            <input type="hidden" name="idPaciente" value="${pacienteEditar.idPaciente}">
+                        </c:if>
+                        
+                        <div class="row g-3">
+                            <div class="col-12"><h6 class="fw-bold text-muted mb-3">Datos Personales</h6></div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Nombres</label>
+                                <input type="text" name="nombresPaciente" class="form-control" required
+                                       value="${pacienteEditar != null ? pacienteEditar.nombres : ''}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Apellidos</label>
+                                <input type="text" name="apellidosPaciente" class="form-control" required
+                                       value="${pacienteEditar != null ? pacienteEditar.apellidos : ''}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">DNI / RUC</label>
+                                <input type="text" name="documento" class="form-control" required
+                                       value="${pacienteEditar != null ? pacienteEditar.documento : ''}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Sexo</label>
+                                <select name="sexo" class="form-select" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="F" ${pacienteEditar.sexo == 'F' ? 'selected' : ''}>Femenino</option>
+                                    <option value="M" ${pacienteEditar.sexo == 'M' ? 'selected' : ''}>Masculino</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12 mt-4"><h6 class="fw-bold text-muted mb-3">Informaci√≥n de Contacto</h6></div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Tel√©fono</label>
+                                <input type="text" name="telefono" class="form-control" required
+                                       value="${pacienteEditar != null ? pacienteEditar.contacto.telefono : ''}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Correo Electr√≥nico</label>
+                                <input type="email" name="correo" class="form-control" required
+                                       value="${pacienteEditar != null ? pacienteEditar.contacto.correo : ''}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Direcci√≥n</label>
+                                <input type="text" name="direccion" class="form-control" 
+                                       value="${pacienteEditar != null ? pacienteEditar.contacto.direccion : ''}">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer border-0 px-0 pb-0 mt-4">
+                            <c:if test="${pacienteEditar != null}">
+                                <a href="pacientes" class="btn btn-light border">Cancelar Edici√≥n</a>
+                            </c:if>
+                            <c:if test="${pacienteEditar == null}">
+                                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancelar</button>
+                            </c:if>
+                            
+                            <button type="submit" class="btn ${pacienteEditar != null ? 'btn-warning text-dark' : 'btn-success'} px-5 fw-bold">
+                                ${pacienteEditar != null ? 'Guardar Cambios' : 'Registrar'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
+    <%-- ================================================================= --%>
+    <%-- SCRIPTS                                                           --%>
+    <%-- ================================================================= --%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <%-- INCLUIR SCRIPTS DE JS AQUÕ (Bootstrap JS) --%>
+    <script>
+        // 1. AUTO-APERTURA DEL MODAL (VERSI√ìN ROBUSTA)
+        document.addEventListener("DOMContentLoaded", function() {
+            // Verificamos si existe la variable 'pacienteEditar' del servidor
+            <c:if test="${pacienteEditar != null}">
+                console.log("‚úÖ MODO EDICI√ìN ACTIVADO: Intentando abrir modal...");
+                
+                // M√âTODO INFALIBLE: Clic en un bot√≥n oculto
+                // Esto evita problemas de inicializaci√≥n manual de Bootstrap
+                var btnTrigger = document.getElementById('btnTriggerEdit');
+                if(btnTrigger) {
+                    btnTrigger.click();
+                } else {
+                    console.error("‚ùå No se encontr√≥ el bot√≥n trigger");
+                }
+            </c:if>
+        });
+
+        // 2. ELIMINACI√ìN
+        function confirmarEliminacion(id) {
+            if (confirm("¬øEst√°s seguro de eliminar al paciente #" + id + "?")) {
+                window.location.href = "pacientes?operacion=eliminar_paciente&id=" + id;
+            }
+        }
+    </script>
 </body>
 </html>

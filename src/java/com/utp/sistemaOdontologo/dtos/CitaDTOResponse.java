@@ -23,21 +23,9 @@ public class CitaDTOResponse {
     private String nombrePaciente;
     private String estadoActual;
     private String motivo;
-    
-    public CitaDTOResponse() {
-    }
-
-    public CitaDTOResponse(Integer idCita, String mensaje, LocalDateTime fechaHoraRegistro, LocalDate fechaCita, String horaCita, String nombreOdontologo, String nombrePaciente, String estadoActual, String motivo) {
-        this.idCita = idCita;
-        this.mensaje = mensaje;
-        this.fechaHoraRegistro = fechaHoraRegistro;
-        this.fechaCita = fechaCita;
-        this.horaCita = horaCita;
-        this.nombreOdontologo = nombreOdontologo;
-        this.nombrePaciente = nombrePaciente;
-        this.estadoActual = estadoActual;
-        this.motivo = motivo;
-    }
+    private String estado;
+    private PacienteDTOResponse paciente;    // O PacienteDTO
+    private TrabajadorDTOResponse odontologo;  // O TrabajadorDTO
 
     public Integer getIdCita() {
         return idCita;
@@ -110,6 +98,30 @@ public class CitaDTOResponse {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
-    
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public PacienteDTOResponse getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(PacienteDTOResponse paciente) {
+        this.paciente = paciente;
+    }
+
+    public TrabajadorDTOResponse getOdontologo() {
+        return odontologo;
+    }
+
+    public void setOdontologo(TrabajadorDTOResponse odontologo) {
+        this.odontologo = odontologo;
+    }
+
     
 }

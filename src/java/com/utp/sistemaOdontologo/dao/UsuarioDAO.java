@@ -33,7 +33,7 @@ public class UsuarioDAO implements IUsuarioRepository{
                 idEmpresaFK = 1; 
             }
             ps.setInt(1, idEmpresaFK);
-            ps.setString(2, usuario.getUsername());
+            ps.setString(2, usuario.getUsuario());
             ps.setString(3, usuario.getContrasena()); // Clave ya hasheada
             ps.setString(4, usuario.getEstado().name());
             
@@ -62,7 +62,7 @@ public class UsuarioDAO implements IUsuarioRepository{
         try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
             // 1. Asignar username y estado
-            ps.setString(paramIndex++, usuario.getUsername());
+            ps.setString(paramIndex++, usuario.getUsuario());
             ps.setString(paramIndex++, usuario.getEstado().name());
 
             // 2. Asignar contraseña (Condicional)
@@ -100,7 +100,7 @@ public class UsuarioDAO implements IUsuarioRepository{
                 
                 // Mapeo de campos simples
                 usuario.setIdUsuario(rs.getInt("id_usuario"));
-                usuario.setUsername(rs.getString("username"));
+                usuario.setUsuario(rs.getString("username"));
                 usuario.setEstado(EstadoUsuario.valueOf(rs.getString("estado")));
                 
                 // Mapeo del FK Empresa (Stub)
@@ -129,7 +129,7 @@ public class UsuarioDAO implements IUsuarioRepository{
                 usuario = new Usuario();
                 // Mapeo completo (¡incluyendo la contraseña hasheada!)
                 usuario.setIdUsuario(rs.getInt("id_usuario"));
-                usuario.setUsername(rs.getString("username"));
+                usuario.setUsuario(rs.getString("username"));
                 usuario.setContrasena(rs.getString("contraseña")); // CLAVE CRUCIAL
                 usuario.setEstado(EstadoUsuario.valueOf(rs.getString("estado")));
                 // ... Mapear Empresa stub ...

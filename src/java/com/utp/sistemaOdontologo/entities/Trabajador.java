@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.utp.sistemaOdontologo.entities;
 
 import com.utp.sistemaOdontologo.entities.enums.Rol;
@@ -14,19 +10,20 @@ import java.time.LocalDate;
 public class Trabajador {
     private  Integer idTrabajador;
     private  Usuario usuario;
-    private Contacto contacto;
+    private  Contacto contacto;
     private  TipoDocumento tipoDocumento;
     private  String nombre;
     private  String apellido;
-    private Rol rol;
+    private  Rol rol;
+    private  String documento;
     private  String colegiatura;
-    private Especialidad especialidad;
+    private  Especialidad especialidad;
     private  LocalDate fechaRegistro;
 
     public Trabajador() {
     }
 
-    public Trabajador(Integer idTrabajador, Usuario usuario, Contacto contacto, TipoDocumento tipoDocumento, String nombre, String apellido, Rol rol, String colegiatura, Especialidad especialidad, LocalDate fechaRegistro) {
+    public Trabajador(Integer idTrabajador, Usuario usuario, Contacto contacto, TipoDocumento tipoDocumento, String nombre, String apellido, Rol rol, String documento, String colegiatura, Especialidad especialidad, LocalDate fechaRegistro) {
         this.idTrabajador = idTrabajador;
         this.usuario = usuario;
         this.contacto = contacto;
@@ -34,6 +31,7 @@ public class Trabajador {
         this.nombre = nombre;
         this.apellido = apellido;
         this.rol = rol;
+        this.documento = documento;
         this.colegiatura = colegiatura;
         this.especialidad = especialidad;
         this.fechaRegistro = fechaRegistro;
@@ -43,24 +41,48 @@ public class Trabajador {
         return idTrabajador;
     }
 
+    public void setIdTrabajador(Integer idTrabajador) {
+        this.idTrabajador = idTrabajador;
+    }
+
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Contacto getContacto() {
         return contacto;
     }
 
+    public void setContacto(Contacto contacto) {
+        this.contacto = contacto;
+    }
+
     public TipoDocumento getTipoDocumento() {
         return tipoDocumento;
+    }
+
+    public void setTipoDocumento(TipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 
     public String getNombre() {
         return nombre;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public String getApellido() {
         return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public Rol getRol() {
@@ -71,54 +93,37 @@ public class Trabajador {
         this.rol = rol;
     }
 
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
     public String getColegiatura() {
         return colegiatura;
-    }
-
-    public Especialidad getEspecialidad() {
-        return especialidad;
-    }
-
-    public LocalDate getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setContacto(Contacto contacto) {
-        this.contacto = contacto;
-    }
-
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    public void setIdTrabajador(Integer idTrabajador) {
-        this.idTrabajador = idTrabajador;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public void setTipoDocumento(TipoDocumento tipoDocumento) {
-        this.tipoDocumento = tipoDocumento;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
     }
 
     public void setColegiatura(String colegiatura) {
         this.colegiatura = colegiatura;
     }
 
+    public Especialidad getEspecialidad() {
+        return especialidad;
+    }
+
+    public void setEspecialidad(Especialidad especialidad) {
+        this.especialidad = especialidad;
+    }
+
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
+    }
+
     public void setFechaRegistro(LocalDate fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
-  
     
 }

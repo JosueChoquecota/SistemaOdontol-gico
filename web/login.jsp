@@ -22,7 +22,7 @@
                                     <h2 class="login-title">Login</h2>
                                     <p class="card-comt">Necesitas cuenta verificada para acceder</p>
                                     <hr>
-                                    <form action="UsuarioController.do" method="POST">
+                                    <form action="UsuarioController" method="POST">
                                         <input type="hidden" name="operacion" value="login"/>
 
                                         <div class="mb-3">

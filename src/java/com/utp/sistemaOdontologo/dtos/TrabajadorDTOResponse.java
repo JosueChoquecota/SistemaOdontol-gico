@@ -15,32 +15,36 @@ import java.time.LocalDate;
 public class TrabajadorDTOResponse {
     private  Integer idTrabajador;
     private  Integer idUsuario;
-    private UsuarioInfoDTO usuario;
-    private ContactoInfoDTO contacto;
-    private EspecialidadDTO especialidad;
-    private Integer idContacto;
+    private  UsuarioInfoDTO usuario;
+    private  ContactoInfoDTO contacto;
+    private  EspecialidadDTO especialidad;
+    private String telefono;
+    private  Integer idContacto;
     private  Integer idTipoDocumento;
     private  String nombre;
     private  String apellido;
-    private String rol;
+    private  String documento;
+    private  String rol;
     private  String colegiatura;
-    private Integer idEspecialidad;
+    private  Integer idEspecialidad;
     private  LocalDate fechaRegistro;
     
 
     public TrabajadorDTOResponse() {
     }
 
-    public TrabajadorDTOResponse(Integer idTrabajador, Integer idUsuario, UsuarioInfoDTO usuario, ContactoInfoDTO contacto, EspecialidadDTO especialidad, Integer idContacto, Integer idTipoDocumento, String nombre, String apellido, String rol, String colegiatura, Integer idEspecialidad, LocalDate fechaRegistro) {
+    public TrabajadorDTOResponse(Integer idTrabajador, Integer idUsuario, UsuarioInfoDTO usuario, ContactoInfoDTO contacto, EspecialidadDTO especialidad, String telefono, Integer idContacto, Integer idTipoDocumento, String nombre, String apellido, String documento, String rol, String colegiatura, Integer idEspecialidad, LocalDate fechaRegistro) {
         this.idTrabajador = idTrabajador;
         this.idUsuario = idUsuario;
         this.usuario = usuario;
         this.contacto = contacto;
         this.especialidad = especialidad;
+        this.telefono = telefono;
         this.idContacto = idContacto;
         this.idTipoDocumento = idTipoDocumento;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.documento = documento;
         this.rol = rol;
         this.colegiatura = colegiatura;
         this.idEspecialidad = idEspecialidad;
@@ -87,6 +91,14 @@ public class TrabajadorDTOResponse {
         this.especialidad = especialidad;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
     public Integer getIdContacto() {
         return idContacto;
     }
@@ -117,6 +129,14 @@ public class TrabajadorDTOResponse {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 
     public String getRol() {
@@ -151,10 +171,5 @@ public class TrabajadorDTOResponse {
         this.fechaRegistro = fechaRegistro;
     }
 
-    
-
-    
-    
-    
-    
 }
+    

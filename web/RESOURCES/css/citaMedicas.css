@@ -2,18 +2,8 @@
 /* ESTILOS PERSONALIZADOS (SISTEMA MÉDICO)   */
 /* ========================================= */
 
-/* 1. Colores y Fondos */
-.bg-teal {
-    background-color: #2b9b9b !important;
-}
 
-.text-teal {
-    color: #2b9b9b !important;
-}
 
-.border-teal {
-    border: 1px solid #2b9b9b !important;
-}
 
 /* 2. Contenedores de Íconos (Cuadrados con ícono dentro) */
 .icon-box {
@@ -61,22 +51,11 @@
 /* ESTILOS PERSONALIZADOS (SISTEMA MÉDICO)   */
 /* ========================================= */
 
-/* 1. Colores y Fondos - Mayor especificidad */
-.bg-teal,
-button.bg-teal,
-.btn.bg-teal {
-    background-color: #2b9b9b !important;
-    border-color: #2b9b9b !important;
-}
 
-.text-teal {
-    color: #2b9b9b !important;
-}
 
 .border-teal,
 .btn-outline-teal {
     border: 2px solid #2b9b9b !important;
-    color: #2b9b9b !important;
     background-color: transparent !important;
 }
 

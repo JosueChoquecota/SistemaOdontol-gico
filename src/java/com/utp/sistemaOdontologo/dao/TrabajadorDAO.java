@@ -29,7 +29,7 @@ public class TrabajadorDAO implements ITrabajadorRepository {
     
     @Override
     public Integer insert(Connection con, Trabajador trabajador) throws SQLException {
-        String SQL = "INSERT INTO Trabajadores (id_usuario, id_contacto, id_tipo_doc, id_especialidad, nombre, apellido, colegiatura, rol, fecha_registro) OUTPUT INSERTED.id_trabajador VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE());";
+        String SQL = "INSERT INTO Trabajadores (id_usuario, id_contacto, id_tipo_doc, id_especialidad, nombre, apellido, colegiatura, rol, fecha_registro, documento) OUTPUT INSERTED.id_trabajador VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?);";
         Integer idGenerado = null;
 
         // 1. Usar Statement.RETURN_GENERATED_KEYS (o OUTPUT INSERTED.id_trabajador en SQL Server)
@@ -52,6 +52,7 @@ public class TrabajadorDAO implements ITrabajadorRepository {
             ps.setString(6, trabajador.getApellido());
             ps.setString(7, trabajador.getColegiatura());
             ps.setString(8, trabajador.getRol().name()); // Usar el nombre del ENUM
+            ps.setString(9, trabajador.getDocumento());
 
             // 4. Ejecutar y obtener ID (executeQuery porque usamos OUTPUT INSERTED)
             try (ResultSet rs = ps.executeQuery()) {
@@ -120,6 +121,8 @@ public class TrabajadorDAO implements ITrabajadorRepository {
                 t.setIdTrabajador(rs.getInt("id_trabajador"));
                 t.setNombre(rs.getString("nombre")); // <-- Esta línea falta o el nombre de la columna es incorrecto
                 t.setApellido(rs.getString("apellido"));
+                t.setDocumento(rs.getString("documento"));
+                
                 // ... (otros mapeos directos) ...
 
                 // 2. CONSTRUCCIÓN DE ENTIDAD ANIDADA: USUARIO
@@ -127,7 +130,7 @@ public class TrabajadorDAO implements ITrabajadorRepository {
                 if (rs.getObject("id_usuario") != null) { 
                     Usuario usuario = new Usuario();
                     usuario.setIdUsuario(rs.getInt("id_usuario"));
-                    usuario.setUsername(rs.getString("username")); // <-- ¡VERIFICA ESTE NOMBRE DE COLUMNA!
+                    usuario.setUsuario(rs.getString("username")); // <-- ¡VERIFICA ESTE NOMBRE DE COLUMNA!
                     usuario.setEstado(EstadoUsuario.valueOf(rs.getString("estado")));
                     // 
 
@@ -138,6 +141,7 @@ public class TrabajadorDAO implements ITrabajadorRepository {
                 if (rs.getObject("id_contacto") != null) {
                     Contacto contacto = new Contacto();
                     contacto.setIdContacto(rs.getInt("id_contacto"));
+                    contacto.setTelefono(rs.getString("telefono"));
                     contacto.setCorreo(rs.getString("correo")); // <-- ¡VERIFICA ESTE NOMBRE DE COLUMNA!
                     // ... otros campos del Contacto
 
@@ -210,7 +214,7 @@ public class TrabajadorDAO implements ITrabajadorRepository {
             
             usuario.setIdUsuario(rs.getInt("id_usuario"));
             // **CORRECCIÓN DE CONVENCIÓN (asumiendo campo en DB y entidad):**
-            usuario.setUsername(rs.getString("username")); 
+            usuario.setUsuario(rs.getString("username")); 
             usuario.setEstado(EstadoUsuario.valueOf(rs.getString("estado")));
             // Puedes mapear el ID de empresa si es necesario para el DTO
             

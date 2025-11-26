@@ -35,6 +35,19 @@ public class HorarioOdontologoDAO implements IHorarioOdontologoRepository {
             }
         }
     }
+    public Integer findIdByHoraInicio(Connection con, java.time.LocalTime hora) throws SQLException {
+        String sql = "SELECT id_horario FROM Horarios WHERE hora_inicio = ?";
+        // Nota: SQL Server usa tipos TIME, asegúrate de que coincida con tu BD
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setTime(1, java.sql.Time.valueOf(hora));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_horario");
+                }
+            }
+        }
+        return null; // Retorna null si no encuentra esa hora exacta
+    }
 
     @Override
     public Integer insert(Connection con, HorarioOdontologo t) throws SQLException {

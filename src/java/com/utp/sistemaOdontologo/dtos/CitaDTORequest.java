@@ -5,6 +5,7 @@
 package com.utp.sistemaOdontologo.dtos;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  *
@@ -12,51 +13,65 @@ import java.time.LocalDate;
  */
 public class CitaDTORequest {
     // =================================================================
-    // A. CAMPOS PRINCIPALES DE LA CITA (Tabla CITAS)
+    // A. CAMPOS DE LA CITA (Tabla CITAS)
     // =================================================================
     
-    // 1. FKs de la Cita (Selecciones del formulario)
-    private Integer idCita;
-    private Integer idTrabajador;     // Odontólogo seleccionado
-    private Integer idHorario;        // Slot de tiempo seleccionado
+    // Identificadores
+    private Integer idCita;         // Para actualizaciones (UPDATE)
+    private Integer idTrabajador;   // Odontólogo seleccionado
+    private Integer idHorario;      // Slot de tiempo (Calculado en Service o enviado directo)
+    private Integer idPaciente;     // ID del paciente (Para flujo Admin)
+
+    // Datos Temporales
+    private LocalDate fechaCita;    // Fecha de la cita
     
-    private LocalDate fechaCita;      // Fecha de la cita
-    private String motivo;            // Motivo de la consulta
+    // 🔥 CORRECCIÓN 1: Agregado para coincidir con el JSP (name="horaCita")
+    private LocalTime horaCita;     
     
-    // 2. Identificación del Paciente
-    private Integer idPaciente;       // ID del paciente existente (Será NULL en este flujo)
+    private LocalTime horarioFin;   // Opcional, se puede calcular sumando 30min
+    
+    // Datos Descriptivos
+    private String motivo;          // Motivo de la consulta
+    private String estado;          // PENDIENTE, ATENDIDO, etc.
+    
+    // 🔥 CORRECCIÓN 2: Agregado para el textarea del Modal
+    private String observaciones;   
 
     // =================================================================
-    // B. DATOS DEL PACIENTE (Para PacientesDatos y Contactos, si es nuevo)
+    // B. DATOS DEL PACIENTE (Solo para flujo de Registro Público)
     // =================================================================
     
     // Identificación
-    private String documento;         // Número de DNI/Documento
-    private Integer idTipoDocumento;  // ID del tipo de documento (ej: DNI=1)
-    private String nombresPaciente;   
+    private String documento;       // DNI/RUC
+    private Integer idTipoDocumento;// 1=DNI
+    private String nombresPaciente;    
     private String apellidosPaciente; 
     
-    // Datos de Contacto (Para la tabla Contactos)
-    private String tipoContacto;    // Ej: "EMAIL" o "PHONE"
-    private String telefono;          
-    private String correo;            
-    private String direccion;         
+    // Contacto
+    private String tipoContacto;    // "EMAIL"
+    private String telefono;           
+    private String correo;             
+    private String direccion;          
     
     // =================================================================
-    // C. DATOS DE PAGO Y NOTIFICACIÓN (Ajustados)
+    // C. DATOS DE PAGO (Opcional)
     // =================================================================
-    private String metodoPago;        // Mapea a: Método de pago (para inserción en Pagos, sin monto)
+    private String metodoPago;
     
     public CitaDTORequest() {
     }
 
-    public CitaDTORequest(Integer idCita, Integer idTrabajador, Integer idHorario, LocalDate fechaCita, String motivo, Integer idPaciente, String documento, Integer idTipoDocumento, String nombresPaciente, String apellidosPaciente, String tipoContacto, String telefono, String correo, String direccion, String metodoPago) {
+    public CitaDTORequest(Integer idCita, Integer idTrabajador, Integer idHorario, Integer idPaciente, LocalDate fechaCita, LocalTime horaCita, LocalTime horarioFin, String motivo, String estado, String observaciones, String documento, Integer idTipoDocumento, String nombresPaciente, String apellidosPaciente, String tipoContacto, String telefono, String correo, String direccion, String metodoPago) {
         this.idCita = idCita;
         this.idTrabajador = idTrabajador;
         this.idHorario = idHorario;
-        this.fechaCita = fechaCita;
-        this.motivo = motivo;
         this.idPaciente = idPaciente;
+        this.fechaCita = fechaCita;
+        this.horaCita = horaCita;
+        this.horarioFin = horarioFin;
+        this.motivo = motivo;
+        this.estado = estado;
+        this.observaciones = observaciones;
         this.documento = documento;
         this.idTipoDocumento = idTipoDocumento;
         this.nombresPaciente = nombresPaciente;
@@ -92,12 +107,36 @@ public class CitaDTORequest {
         this.idHorario = idHorario;
     }
 
+    public Integer getIdPaciente() {
+        return idPaciente;
+    }
+
+    public void setIdPaciente(Integer idPaciente) {
+        this.idPaciente = idPaciente;
+    }
+
     public LocalDate getFechaCita() {
         return fechaCita;
     }
 
     public void setFechaCita(LocalDate fechaCita) {
         this.fechaCita = fechaCita;
+    }
+
+    public LocalTime getHoraCita() {
+        return horaCita;
+    }
+
+    public void setHoraCita(LocalTime horaCita) {
+        this.horaCita = horaCita;
+    }
+
+    public LocalTime getHorarioFin() {
+        return horarioFin;
+    }
+
+    public void setHorarioFin(LocalTime horarioFin) {
+        this.horarioFin = horarioFin;
     }
 
     public String getMotivo() {
@@ -108,12 +147,20 @@ public class CitaDTORequest {
         this.motivo = motivo;
     }
 
-    public Integer getIdPaciente() {
-        return idPaciente;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setIdPaciente(Integer idPaciente) {
-        this.idPaciente = idPaciente;
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
     public String getDocumento() {
@@ -188,5 +235,4 @@ public class CitaDTORequest {
         this.metodoPago = metodoPago;
     }
 
-   
 }

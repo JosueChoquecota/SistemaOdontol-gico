@@ -76,6 +76,7 @@ public class PacienteService {
     }
     public Integer crearNuevoPacienteTransaccional(Connection con, CitaDTORequest request) throws Exception {
 
+        // 1. Validaciones y valores por defecto (Tal cual lo tenías)
         if (request.getNombresPaciente() == null || request.getNombresPaciente().isEmpty()) {
             request.setNombresPaciente("PACIENTE_TEMP");
         }
@@ -83,29 +84,58 @@ public class PacienteService {
             request.setApellidosPaciente(request.getDocumento());
         }
 
-        // Asignar FKs y datos obligatorios para Contacto/Paciente
+        // Asignar FKs y datos obligatorios por defecto
         request.setIdTipoDocumento(1);      // Asumir que 1 es DNI/Cédula
-        request.setTipoContacto("EMAIL");   // Asignar un valor válido (EMAIL o PHONE)
+        request.setTipoContacto("EMAIL");   // Valor por defecto
 
-        // Si la tabla Contactos no permite NULL en dirección:
         if (request.getDireccion() == null || request.getDireccion().isEmpty()) {
             request.setDireccion("Desconocida");
         }
-        // Si la tabla Contactos no permite NULL en correo:
         if (request.getCorreo() == null || request.getCorreo().isEmpty()) {
             request.setCorreo("temporal@utp.com");
         }
 
-        // A. Contacto
-        Contacto contacto = CitaMapper.toContactoEntity(request);
-        Integer idContacto = contactoDAO.insert(con, contacto);
-        if (idContacto == null) { throw new Exception("Fallo la inserción de Contacto."); }
+        // =================================================================
+        // A. INSERTAR CONTACTO (Mapeo manual aquí en lugar del Mapper)
+        // =================================================================
+        Contacto contacto = new Contacto();
+        contacto.setCorreo(request.getCorreo());
+        contacto.setTelefono(request.getTelefono());
+        contacto.setDireccion(request.getDireccion());
+        contacto.setTipoContacto(request.getTipoContacto()); // Ojo: Asegúrate que tu Entidad Contacto tenga este campo
 
-        // B. Paciente
-        PacienteDatos paciente = CitaMapper.toPacienteEntity(request, idContacto);
+        Integer idContacto = contactoDAO.insert(con, contacto);
+
+        if (idContacto == null) { 
+            throw new Exception("Fallo la inserción de Contacto."); 
+        }
+
+        // =================================================================
+        // B. INSERTAR PACIENTE (Mapeo manual aquí en lugar del Mapper)
+        // =================================================================
+        PacienteDatos paciente = new PacienteDatos();
+
+        // Datos personales
+        paciente.setNombres(request.getNombresPaciente());
+        paciente.setApellidos(request.getApellidosPaciente());
+        paciente.setDocumento(request.getDocumento());
+
+        // Relación con Contacto (Stub)
+        Contacto contactoStub = new Contacto();
+        contactoStub.setIdContacto(idContacto);
+        paciente.setContacto(contactoStub);
+
+        // Relación con Tipo Documento (Stub)
+        TipoDocumento tipoDocStub = new TipoDocumento();
+        tipoDocStub.setIdTipoDocumento(request.getIdTipoDocumento());
+        paciente.setTipoDocumento(tipoDocStub);
+
+        // Ejecutar Insert
         Integer idPaciente = pacienteDAO.insert(con, paciente);
 
-        if (idPaciente == null) { throw new Exception("Fallo la inserción de PacienteDatos."); }
+        if (idPaciente == null) { 
+            throw new Exception("Fallo la inserción de PacienteDatos."); 
+        }
 
         return idPaciente;
     }

@@ -217,7 +217,7 @@ public class TrabajadorService {
         // El ID de Contacto ya está en la entidad existente.
 
         // B. Preparar Usuario: Actualizar Username y Contraseña. MANTENER el Estado.
-        usuarioExistente.setUsername(request.getUsername());
+        usuarioExistente.setUsuario(request.getUsuario());
         // Encriptar y actualizar la contraseña si el campo no está vacío
         if (request.getContrasena() != null && !request.getContrasena().isEmpty()) {
             // Asumiendo que tienes una clase para hashear la contraseña

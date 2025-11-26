@@ -1,3 +1,12 @@
+<%-- 
+    LÓGICA JAVA SIDEBAR:
+    Detectamos la URI para saber qué botón iluminar.
+--%>
+<%
+    String uri = request.getRequestURI();
+    String pageName = uri.substring(uri.lastIndexOf("/") + 1);
+%>
+
 <div class="d-none d-md-flex bg-teal text-white flex-column vh-100 p-4" style="width: 280px;">
     
     <h4 class="text-center fw-bold mb-4 d-flex align-items-center justify-content-center">
@@ -6,23 +15,50 @@
 
     <ul class="nav nav-pills flex-column gap-1">
         
+        <%-- 1. TABLERO --%>
         <li class="nav-item">
-          <a href="Tablero.jsp" class="nav-link text-white d-flex align-items-center"><i class="bi bi-calendar3 me-3"></i> Tablero</a>
+            <a href="Tablero.jsp" class="nav-link text-white d-flex align-items-center <%= pageName.equals("Tablero.jsp") ? "active-link" : "" %>">
+                <i class="bi bi-calendar3 me-3"></i> Tablero
+            </a>
         </li>
-        <li class="nav-item">
-          <a href="Citas.jsp" class="nav-link text-white d-flex align-items-center"><i class="bi bi-journal-medical me-3"></i> Citas Médicas</a>
-        </li>
-        
-        <li class="nav-item active-link">
-          <a href="Pacientes.jsp" class="nav-link text-white d-flex align-items-center"><i class="bi bi-person-lines-fill me-3"></i> Pacientes</a>
-        </li>
-        
 
+        <%-- 2. CITAS (CORREGIDO) --%>
         <li class="nav-item">
-          <a href="Trabajadores.jsp" class="nav-link text-white d-flex align-items-center"><i class="bi bi-people-fill me-3"></i> Trabajadores</a>
+            <%-- 
+               CAMBIO IMPORTANTE: 
+               1. href apunta al SERVLET ("citas?operacion=listar_citas") para cargar datos antes de mostrar.
+               2. "active-link" detecta si la URL contiene "citas" (del servlet) o es el JSP.
+            --%>
+            <a href="citas?operacion=listar_citas" class="nav-link text-white d-flex align-items-center <%= (pageName.equals("Citas.jsp") || pageName.contains("citas")) ? "active-link" : "" %>">
+                <i class="bi bi-journal-medical me-3"></i> Citas Médicas
+            </a>
         </li>
-                <li class="nav-item">
-          <a href="Configuracion.jsp" class="nav-link text-white d-flex align-items-center"><i class="bi bi-gear-fill me-3"></i> Configuración</a>
+        
+        <%-- 3. PACIENTES (CORREGIDO) --%>
+        <li class="nav-item">
+            <%-- 
+               AQUÍ ESTÁ EL CAMBIO:
+               Usamos 'contains("pacientes")' para que detecte cuando la URL es el Servlet.
+               También mantenemos 'equals("Pacientes.jsp")' por si acaso entras directo.
+            --%>
+            <a href="pacientes?operacion=listar_pacientes" class="nav-link text-white d-flex align-items-center <%= (pageName.equals("Pacientes.jsp") || pageName.contains("pacientes")) ? "active-link" : "" %>">
+                <i class="bi bi-person-lines-fill me-3"></i> Pacientes
+            </a>
+        </li>
+        
+        <%-- 4. TRABAJADORES (PREPARADO PARA FUTURO SERVLET) --%>
+        <li class="nav-item">
+            <%-- He actualizado este también para que cuando lo cambies al servlet, siga funcionando el active --%>
+            <a href="trabajadores?operacion=listar_trabajadores" class="nav-link text-white d-flex align-items-center <%= (pageName.equals("Trabajadores.jsp") || pageName.contains("trabajadores")) ? "active-link" : "" %>">
+                <i class="bi bi-people-fill me-3"></i> Trabajadores
+            </a>
+        </li>
+
+        <%-- 5. CONFIGURACIÓN --%>
+        <li class="nav-item">
+            <a href="Configuracion.jsp" class="nav-link text-white d-flex align-items-center <%= pageName.equals("Configuracion.jsp") ? "active-link" : "" %>">
+                <i class="bi bi-gear-fill me-3"></i> Configuración
+            </a>
         </li>
         
     </ul>

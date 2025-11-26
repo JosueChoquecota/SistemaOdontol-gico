@@ -15,14 +15,21 @@
             <servlet-name>TrabajadorController</servlet-name>
             <servlet-class>com.utp.sistemaOdontologo.controller.TrabajadorController</servlet-class>
         </servlet>
-        
+        <servlet>
+            <servlet-name>PacienteController</servlet-name>
+            <servlet-class>com.utp.sistemaOdontologo.controller.PacienteController</servlet-class>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>PacienteController</servlet-name>
+            <url-pattern>/pacientes</url-pattern>
+        </servlet-mapping>
         <servlet-mapping>
             <servlet-name>UsuarioController</servlet-name>
             <url-pattern>/UsuarioController</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>CitaController</servlet-name>
-            <url-pattern>/CitaController</url-pattern>
+            <url-pattern>/citas</url-pattern>
         </servlet-mapping>
         <servlet-mapping>
             <servlet-name>TrabajadorController</servlet-name>

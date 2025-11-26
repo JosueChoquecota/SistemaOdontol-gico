@@ -1,0 +1,50 @@
+<%-- 
+    FRAGMENTO: TOPBAR (Barra Superior)
+    Se incluye en todas las páginas principales.
+--%>
+<%@ page pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<header class="w-100 d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom bg-white pt-3 px-4 shadow-sm">
+    
+    <%-- LADO IZQUIERDO: BOTÓN HELP O BREADCRUMB --%>
+    <div class="d-flex align-items-center">
+        <button class="btn btn-info text-white btn-sm rounded-pill px-3 fw-bold shadow-sm">
+            <i class="bi bi-question-circle-fill me-1"></i> Ayuda
+        </button>
+    </div>
+
+    <%-- LADO DERECHO: PERFIL DEL DOCTOR --%>
+    <div class="d-flex align-items-center gap-3">
+        
+        <%-- 
+           LÓGICA DINÁMICA:
+           Verificamos si hay un usuario en sesión para mostrar su nombre.
+        --%>
+        <div class="text-end d-none d-sm-block" style="line-height: 1.2;">
+            <span class="d-block fw-bold text-dark">
+                <%-- Si existe el usuario, muestra su nombre; si no, muestra "Invitado" --%>
+                Hola, <span class="text-primary">${not empty sessionScope.usuario.usuario ? sessionScope.usuario.usuario : 'Doctor'}!</span>
+            </span>
+            
+            <small class="text-muted" style="font-size: 0.8rem;">
+                <%-- Aquí podrías mostrar el Rol si tu DTO lo tiene, ej: ${sessionScope.usuario.rol} --%>
+                Panel Administrativo
+            </small>
+        </div>
+        
+        <div class="position-relative">
+            <%-- Avatar / Icono de Perfil --%>
+            <div class="rounded-circle bg-light border d-flex justify-content-center align-items-center text-secondary" 
+                 style="width: 40px; height: 40px; font-size: 1.2rem;">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            
+            <%-- Indicador de estado (opcional) --%>
+            <span class="position-absolute bottom-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle">
+                <span class="visually-hidden">Online</span>
+            </span>
+        </div>
+    </div>
+    
+</header>

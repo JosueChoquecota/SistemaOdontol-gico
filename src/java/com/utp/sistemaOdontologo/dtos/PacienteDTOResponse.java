@@ -4,60 +4,99 @@
  */
 package com.utp.sistemaOdontologo.dtos;
 
+import java.time.LocalDate;
+
 /**
  *
  * @author ASUS
  */
 public class PacienteDTOResponse {
-    private String codigo; // Ej: "C12"
-    private String nombre;
-    private String apellido;
-    private String dniRuc;
-    private String correo;
+    private Integer idPaciente;
+    private Integer idContacto;
+    
+    private String nombresPaciente;
+    private String apellidosPaciente;
+    private String documento;
+    private Integer idTipoDocumento;
+    private LocalDate fechaNacimiento;
+    private String sexo;
     private String telefono;
+    private String correo;
+    private String direccion;
 
     public PacienteDTOResponse() {
     }
 
-    public PacienteDTOResponse(String codigo, String nombre, String apellido, String dniRuc, String correo, String telefono) {
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.dniRuc = dniRuc;
-        this.correo = correo;
+    public Integer getIdPaciente() {
+        return idPaciente;
+    }
+
+    public void setIdPaciente(Integer idPaciente) {
+        this.idPaciente = idPaciente;
+    }
+
+    public Integer getIdContacto() {
+        return idContacto;
+    }
+
+    public void setIdContacto(Integer idContacto) {
+        this.idContacto = idContacto;
+    }
+
+    public String getNombresPaciente() {
+        return nombresPaciente;
+    }
+
+    public void setNombresPaciente(String nombresPaciente) {
+        this.nombresPaciente = nombresPaciente;
+    }
+
+    public String getApellidosPaciente() {
+        return apellidosPaciente;
+    }
+
+    public void setApellidosPaciente(String apellidosPaciente) {
+        this.apellidosPaciente = apellidosPaciente;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public Integer getIdTipoDocumento() {
+        return idTipoDocumento;
+    }
+
+    public void setIdTipoDocumento(Integer idTipoDocumento) {
+        this.idTipoDocumento = idTipoDocumento;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public String getDniRuc() {
-        return dniRuc;
-    }
-
-    public void setDniRuc(String dniRuc) {
-        this.dniRuc = dniRuc;
     }
 
     public String getCorreo() {
@@ -68,13 +107,13 @@ public class PacienteDTOResponse {
         this.correo = correo;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
-    
-    
+
+  
 }

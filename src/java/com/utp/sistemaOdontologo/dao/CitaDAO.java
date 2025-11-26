@@ -58,34 +58,67 @@ public class CitaDAO implements ICitaRepository {
     }
     @Override
     public List<Cita> listAll(Connection con) throws SQLException {
-    List<Cita> citas = new ArrayList<>();
-    
-    // Corregimos la sintaxis de las columnas de la tabla Horarios, 
-    // usando los nombres que la base de datos ha confirmado (horario_inicio, horario_fin)
-    String SQL = "SELECT " + 
-                 " c.id_cita, c.fecha, c.motivo," + // Asumo fecha_registro es el timestamp
-                 " p.id_paciente, p.nombres AS p_nombres, p.apellidos AS p_apellidos, " +
-                 " t.id_trabajador, t.nombre AS t_nombres, t.apellido AS t_apellidos, " + 
-                 // NOMBRES CORRECTOS CONFIRMADOS:
-                 " h.id_horario, h.horario_inicio, h.horario_fin, " + 
-                 " e.id_estado, e.nombre AS e_descripcion " + 
-                 "FROM Citas c " +
-                 "INNER JOIN PacientesDatos p ON c.id_paciente = p.id_paciente " + 
-                 "INNER JOIN Trabajadores t ON c.id_trabajador = t.id_trabajador " +
-                 "INNER JOIN Horarios h ON c.id_horario = h.id_horario " +
-                 "INNER JOIN EstadoCitas e ON c.id_estado = e.id_estado " + 
-                 "ORDER BY c.fecha DESC";
+        List<Cita> lista = new ArrayList<>();
 
-    try (PreparedStatement ps = con.prepareStatement(SQL);
-         ResultSet rs = ps.executeQuery()) {
-        
-        while (rs.next()) {
-            // El mapper ahora recibirá el ResultSet completo
-            citas.add(CitaMapper.toEntity(rs)); 
+        // Tu query exacta con los ALIAS
+        String sql = "SELECT " +
+                     "  C.id_cita, C.fecha, C.motivo, " +
+                     "  P.nombres AS pac_nom, P.apellidos AS pac_ape, P.documento AS pac_doc, " +
+                     "  T.id_trabajador, T.nombre AS doc_nom, T.apellido AS doc_ape, " +
+                     "  H.id_horario, H.horario_inicio, H.horario_fin, " +
+                     "  E.nombre AS estado_nombre " +
+                     "FROM Citas C " +
+                     "INNER JOIN PacientesDatos P ON C.id_paciente = P.id_paciente " +
+                     "INNER JOIN Trabajadores T ON C.id_trabajador = T.id_trabajador " +
+                     "INNER JOIN Horarios H ON C.id_horario = H.id_horario " +
+                     "INNER JOIN EstadoCitas E ON C.id_estado = E.id_estado";
+
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Cita cita = new Cita();
+
+                // 1. Datos directos de la Cita
+                cita.setIdCita(rs.getInt("id_cita"));
+                cita.setFechaCita(rs.getDate("fecha").toLocalDate());
+                cita.setMotivo(rs.getString("motivo"));
+
+                // 2. Llenar Objeto PACIENTE (Usando los Alias)
+                PacienteDatos pac = new PacienteDatos();
+                // OJO: Usamos "pac_nom", no "nombres"
+                pac.setNombres(rs.getString("pac_nom")); 
+                pac.setApellidos(rs.getString("pac_ape"));
+                pac.setDocumento(rs.getString("pac_doc"));
+                cita.setPaciente(pac);
+
+                // 3. Llenar Objeto TRABAJADOR (Odontólogo)
+                Trabajador doc = new Trabajador();
+                doc.setIdTrabajador(rs.getInt("id_trabajador"));
+                // OJO: Usamos "doc_nom", no "nombre"
+                doc.setNombre(rs.getString("doc_nom"));
+                doc.setApellido(rs.getString("doc_ape"));
+                cita.setTrabajador(doc);
+
+                // 4. Llenar Objeto HORARIO
+                Horario hor = new Horario();
+                hor.setIdHorario(rs.getInt("id_horario"));
+                // Convertir de SQL Time a LocalTime
+                hor.setHorarioInicio(rs.getTime("horario_inicio").toLocalTime());
+                hor.setHorarioFin(rs.getTime("horario_fin").toLocalTime());
+                cita.setHorario(hor);
+
+                // 5. Llenar Objeto ESTADO
+                EstadoCita est = new EstadoCita();
+                est.setNombreEstado(rs.getString("estado_nombre"));
+                cita.setEstado(est);
+
+                lista.add(cita);
+            }
         }
+        return lista;
     }
-    return citas;
-} 
+    
     @Override
     public Boolean delete(Connection con, Integer idCita) throws SQLException {
             // SQL para eliminar la fila principal de Citas

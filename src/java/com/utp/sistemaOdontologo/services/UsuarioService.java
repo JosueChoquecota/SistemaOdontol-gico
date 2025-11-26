@@ -53,7 +53,7 @@ public class UsuarioService {
             if (hashIngresado.equals(hashAlmacenado)) { 
                 
                 UsuarioInfoDTO dtoResponse = new UsuarioInfoDTO();
-                dtoResponse.setUsername(usuarioDB.getUsername());
+                dtoResponse.setUsuario(usuarioDB.getUsuario());
                 dtoResponse.setIdUsuario(usuarioDB.getIdUsuario());
                 dtoResponse.setEstado(usuarioDB.getEstado().name());
                 

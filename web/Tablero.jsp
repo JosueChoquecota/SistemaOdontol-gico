@@ -5,112 +5,188 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Dashboard del Doctor</title>
     
+    <%-- LIBRERÍA FULLCALENDAR --%>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
     
+    <%-- ESTILOS GLOBALES (BOOTSTRAP + ICONOS) --%>
     <%@ include file="/WEB-INF/jspf/styles.jspf" %>
-    <link rel="stylesheet" href="RESOURCES/css/doctorTablero.css">
     
     <style>
+        /* =========================================
+           ESTILOS SEGUROS PARA EL TABLERO
+           (Reemplazan a doctorTablero.css)
+           ========================================= */
+
+        /* Contenedor derecho que ocupa el espacio restante */
+        #page-content-wrapper {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto; /* Scroll solo en el contenido, sidebar fijo */
+            background-color: #fff;
+        }
+
+        /* Estilos para los Botones Superiores (Reemplazo de btn-verde) */
+        .btn-custom-teal {
+            background-color: #20c997; /* Color similar al diseño */
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+        .btn-custom-teal:hover {
+            background-color: #1aa179;
+            color: white;
+        }
+
+        /* Estilos para los Botones de Navegación (Reemplazo de btn-gris) */
+        .btn-custom-grey {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 4px;
+        }
+        .btn-custom-grey:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+
+        /* Título del mes */
+        .titulo-mes {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 0 20px;
+            text-transform: uppercase;
+        }
+
+        /* Contenedor de la cabecera del calendario */
+        .calendar-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        /* Ajuste para la columna de hora personalizada (script) */
+        .custom-time-right {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50px;
+            background: #fff;
+            border-left: 1px solid #ddd;
+            z-index: 10;
+            pointer-events: none; 
+        }
+        .custom-time-label {
+            text-align: center;
+            font-size: 0.85em;
+            color: #666;
+            border-bottom: 1px solid #eee; 
+            box-sizing: border-box;
+        }
     </style>
 </head>
 
 <body>
+
+    <%-- CONTENEDOR FLEX PRINCIPAL: Sidebar a la izquierda, Contenido a la derecha --%>
+    <div class="d-flex" id="wrapper">
+
+    <%-- 1. SIDEBAR --%>
     <%@ include file="/WEB-INF/jspf/sideBar.jspf" %>
     
-    <div class="contenedor-header">
-        <div class="bienvenida">
-            <button class="mi-boton btn-verde">Help</button>
-            <h2 class="saludo">Hola, Doctor</h2>
-        </div>
+    <%-- 2. CONTENIDO DERECHO --%>
+    <div id="page-content-wrapper">
         
-        <div class="botones">
-            <button class="mi-boton btn-verde">Confirmada</button>
-            <button class="mi-boton btn-verde">Atendida</button>
-            <button class="mi-boton btn-verde">Cancelada</button>
-            <button class="mi-boton btn-verde">Pendiente</button>
-        </div>
+        <%-- A. BARRA SUPERIOR (Siempre va primero y sola) --%>
+        <%@ include file="/WEB-INF/jspf/topBar.jspf" %>
         
-        <div class="fila-3">
-            <div class="grupo-botones">
-                <button class="mi-boton btn-gris" id="btnPrev"><</button>
-                <button class="mi-boton btn-gris" id="btnNext">></button>
-                <button class="mi-boton btn-gris" id="btnToday">Hoy</button>
+        <%-- B. CONTENIDO ESPECÍFICO DEL TABLERO (Con padding) --%>
+        <div class="container-fluid px-4">
+            
+            <%-- Fila de Botones de Estado (Debajo del TopBar) --%>
+            <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
+                <button class="btn-custom-teal">Confirmada</button>
+                <button class="btn-custom-teal">Atendida</button>
+                <button class="btn-custom-teal">Cancelada</button>
+                <button class="btn-custom-teal">Pendiente</button>
             </div>
-            <h2 class="titulo-pixel" id="currentMonth">MAYO 2025</h2>
-            <div class="grupo-botones">
-                <button class="mi-boton btn-gris" id="btnMonth">Mes</button>
-                <button class="mi-boton btn-gris" id="btnWeek">Semana</button>
-                <button class="mi-boton btn-gris" id="btnDay">Dia</button>
+            
+            <%-- Cabecera del Calendario --%>
+            <div class="calendar-header bg-light p-3 rounded shadow-sm d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div class="btn-group mb-2 mb-md-0">
+                    <button class="btn-custom-grey" id="btnPrev"><i class="bi bi-chevron-left"></i></button>
+                    <button class="btn-custom-grey" id="btnNext"><i class="bi bi-chevron-right"></i></button>
+                    <button class="btn-custom-grey" id="btnToday">Hoy</button>
+                </div>
+                
+                <div class="titulo-mes fw-bold fs-4 text-center mb-2 mb-md-0" id="currentMonth">MAYO 2025</div>
+                
+                <div class="btn-group">
+                    <button class="btn-custom-grey" id="btnMonth">Mes</button>
+                    <button class="btn-custom-grey" id="btnWeek">Semana</button>
+                    <button class="btn-custom-grey" id="btnDay">Dia</button>
+                </div>
             </div>
-        </div>
+            
+            <%-- Calendario --%>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-0">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+            
+        </div> <%-- Fin container-fluid --%>
         
-        <div id="calendar"></div>
-    </div>
+    </div> <%-- Fin page-content-wrapper --%>
+</div> <%-- Fin wrapper --%>
 
+    <%-- SCRIPTS --%>
     <script>
         let calendar;
         
-        // ==================================================
-        // FUNCIÓN CORREGIDA: COPIA ALTURAS REALES (PIXEL PERFECT)
-        // ==================================================
+        // Función para ajustar la columna de tiempo (tu lógica original)
         function createRightTimeColumn() {
-            // 1. Limpieza previa
             const existing = document.querySelector('.custom-time-right');
-            if (existing) {
-                existing.remove();
-            }
+            if (existing) existing.remove();
             
-            // 2. Esperar renderizado
             setTimeout(function() {
-                // Contenedor donde inyectaremos la columna
                 const scrollContainer = document.querySelector('.fc-scroller-liquid-absolute');
+                if (!scrollContainer) return;
                 
-                if (!scrollContainer) return; // Si no existe (ej: vista mensual), salimos
-                
-                // Buscamos las FILAS de la tabla de tiempos original (las que contienen los slots)
-                // Usamos selectores específicos de FullCalendar v6
                 const slotRows = document.querySelectorAll('.fc-timegrid-slots tr');
-                
                 if (slotRows.length === 0) return;
                 
-                // Crear contenedor
                 const rightColumn = document.createElement('div');
                 rightColumn.className = 'custom-time-right';
                 
-                // 3. Iterar por cada fila original para copiar su altura
                 slotRows.forEach(function(row) {
-                    // Intentamos buscar el texto de la hora (ej: "9am")
                     const labelEl = row.querySelector('.fc-timegrid-slot-label-cushion');
-                    const timeText = labelEl ? labelEl.innerText : ''; // Si es media hora (vacío), queda vacío
-                    
-                    // OBTENER ALTURA REAL COMPUTADA
-                    const rowHeight = row.offsetHeight; // Esto nos da la altura exacta, sea 40px, 60px, etc.
+                    const timeText = labelEl ? labelEl.innerText : '';
+                    const rowHeight = row.offsetHeight;
                     
                     const timeDiv = document.createElement('div');
                     timeDiv.className = 'custom-time-label';
                     timeDiv.innerText = timeText;
-                    
-                    // APLICAR ALTURA
                     timeDiv.style.height = rowHeight + 'px';
-                    // APLICAR LINE-HEIGHT PARA CENTRAR VERTICALMENTE
                     timeDiv.style.lineHeight = rowHeight + 'px';
                     
                     rightColumn.appendChild(timeDiv);
                 });
                 
-                // 4. Insertar en el DOM
-                // Nos aseguramos de que el contenedor tenga position relative
                 scrollContainer.style.position = 'relative'; 
                 scrollContainer.appendChild(rightColumn);
                 
-                console.log('✅ Columna derecha ajustada dinámicamente.');
-                
-            }, 100); // Pequeño delay para asegurar que el navegador ya pintó la tabla
+            }, 100);
         }
-        
-        // ==================================================
-        // INICIALIZACIÓN DEL CALENDARIO
-        // ==================================================
+
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             
@@ -119,74 +195,48 @@
                 initialView: 'timeGridWeek',
                 headerToolbar: false,
                 allDaySlot: false,
-                
+                height: 'auto',
+                contentHeight: 600,
+
+                // === AQUÍ ESTÁ EL CAMBIO ===
+                // Apunta al Servlet con la operación nueva
+                events: 'citas?operacion=obtener_citas_json', 
+
+                // Resto de tu configuración...
                 slotLabelFormat: {
                     hour: 'numeric',
                     hour12: true,
                     meridiem: 'short'
                 },
-                
-                dayHeaderFormat: {
-                    weekday: 'short',
-                    day: 'numeric'
-                },
-                
-                height: '75vh',
-                expandRows: true, // Esto estira las filas para llenar el alto
-                
-                slotMinTime: '09:00:00',
-                slotMaxTime: '18:00:00',
-                
-                events: [],
-                
-                // Eventos del ciclo de vida
+                // ... (mantén tus eventos datesSet, viewDidMount, etc.)
                 datesSet: function(info) {
-                    // Actualizar título del mes
-                    // (Añade tu lógica aquí si la tenías para actualizar #currentMonth)
+                    document.getElementById('currentMonth').innerText = info.view.title;
                     createRightTimeColumn();
                 },
-                
                 viewDidMount: function(info) {
                     createRightTimeColumn();
                 },
-                
                 windowResize: function(view) {
-                    // Recalcular si se cambia el tamaño de la ventana
                     createRightTimeColumn();
                 }
             });
             
             calendar.render();
             
-            // ==================================================
-            // BOTONES DE NAVEGACIÓN
-            // ==================================================
-            document.getElementById('btnPrev').addEventListener('click', function() {
-                calendar.prev();
-            });
+            // VINCULAR BOTONES PERSONALIZADOS
+            document.getElementById('btnPrev').addEventListener('click', () => calendar.prev());
+            document.getElementById('btnNext').addEventListener('click', () => calendar.next());
+            document.getElementById('btnToday').addEventListener('click', () => calendar.today());
             
-            document.getElementById('btnNext').addEventListener('click', function() {
-                calendar.next();
-            });
-            
-            document.getElementById('btnToday').addEventListener('click', function() {
-                calendar.today();
-            });
-            
-            document.getElementById('btnMonth').addEventListener('click', function() {
+            document.getElementById('btnMonth').addEventListener('click', () => {
                 calendar.changeView('dayGridMonth');
-                // Ocultar columna en vista de mes
+                // Ocultar columna extra en vista mensual
                 const col = document.querySelector('.custom-time-right');
                 if(col) col.style.display = 'none';
             });
             
-            document.getElementById('btnWeek').addEventListener('click', function() {
-                calendar.changeView('timeGridWeek');
-            });
-            
-            document.getElementById('btnDay').addEventListener('click', function() {
-                calendar.changeView('timeGridDay');
-            });
+            document.getElementById('btnWeek').addEventListener('click', () => calendar.changeView('timeGridWeek'));
+            document.getElementById('btnDay').addEventListener('click', () => calendar.changeView('timeGridDay'));
         });
     </script>
 </body>

@@ -36,7 +36,7 @@ public class TrabajadorMapper {
     // --- 2. Mapeo para USUARIO ---
     public static Usuario toUsuarioEntity(TrabajadorDTORequest request) {
         Usuario usuario = new Usuario();
-        usuario.setUsername(request.getUsername());
+        usuario.setUsuario(request.getUsuario());
         // La CONTRASENA se pasa PLANA. El HASHING se hará en el SERVICE.
         usuario.setContrasena(request.getContrasena()); 
         // El estado y el idEmpresa serán asignados por el SERVICE.
@@ -53,7 +53,8 @@ public class TrabajadorMapper {
         entity.setApellido(request.getApellido());
         entity.setColegiatura(request.getColegiatura());
         entity.setFechaRegistro(request.getFechaRegistro()); 
-
+        entity.setDocumento(request.getDocumento());
+        entity.setRol(Rol.ODONTOLOGO);
         // -------------------------------------------------------------
         // Asignación de IDs GENERADOS (Stub Entities)
         // -------------------------------------------------------------
@@ -116,6 +117,7 @@ public class TrabajadorMapper {
     response.setColegiatura(entity.getColegiatura());
     response.setRol(entity.getRol().name());
     response.setFechaRegistro(entity.getFechaRegistro());
+    response.setDocumento(entity.getDocumento());
 
     // 2. Composición de DTOs para exponer solo la información necesaria
     
@@ -155,7 +157,7 @@ public class TrabajadorMapper {
         // CORRECTION: Use the standard getter for the username field.
         // If your Usuario entity's field is 'username', the getter should be getUsername().
         // If your entity's getter is indeed getUsuario(), then the issue is likely elsewhere.
-        dto.setUsername(usuario.getUsername()); 
+        dto.setUsuario(usuario.getUsuario()); 
 
         dto.setEstado(usuario.getEstado().name()); 
         return dto;

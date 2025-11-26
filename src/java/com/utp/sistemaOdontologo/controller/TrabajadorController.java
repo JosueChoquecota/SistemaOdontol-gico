@@ -79,10 +79,11 @@ public class TrabajadorController extends HttpServlet {
         dto.setNombre(request.getParameter("nombre"));
         dto.setApellido(request.getParameter("apellido"));
         dto.setColegiatura(request.getParameter("colegiatura"));
-
+        
         // IDs de Catálogo (Requiere Integer.parseInt)
         dto.setIdTipoDocumento(Integer.parseInt(request.getParameter("idTipoDocumento")));
         dto.setIdRol(Integer.parseInt(request.getParameter("idRol")));
+        dto.setDocumento(request.getParameter("documento"));
         
         // La especialidad es opcional/nula
         String idEsp = request.getParameter("idEspecialidad");
@@ -96,12 +97,14 @@ public class TrabajadorController extends HttpServlet {
         dto.setDireccion(request.getParameter("direccion"));
         dto.setTipoContacto("EMAIL"); // Fijo para el registro inicial
         
+        
         // Datos de Usuario (Login y Contraseña)
-        dto.setUsername(request.getParameter("username"));
+        dto.setUsuario(request.getParameter("username"));
         dto.setContrasena(request.getParameter("contrasena"));
         
         // Fecha de registro (Asignada por el sistema)
         dto.setFechaRegistro(LocalDate.now());
+        
 
         // 2. LLAMADA AL SERVICIO (Transaccional INSERT)
         idTrabajadorGenerado = trabajadorService.insert(dto);
@@ -238,7 +241,7 @@ public class TrabajadorController extends HttpServlet {
             dto.setIdUsuario(Integer.parseInt(request.getParameter("idUsuario"))); 
             dto.setIdContacto(Integer.parseInt(request.getParameter("idContacto"))); 
 
-            dto.setUsername(request.getParameter("username"));
+            dto.setUsuario(request.getParameter("username"));
             dto.setContrasena(request.getParameter("contrasena")); // El Service manejará si esto es NULL/Vacío
 
             // -------------------------------------------------------------

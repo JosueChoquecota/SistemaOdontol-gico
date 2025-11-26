@@ -103,10 +103,10 @@ public Integer insert(Connection con, PacienteDatos paciente) throws SQLExceptio
                 PacienteDTOResponse response = new PacienteDTOResponse();
 
                 // Mapeo directo a los campos necesarios para la vista (Figma)
-                response.setCodigo("P" + rs.getInt("id_paciente")); // Generar un código como C12/P12
-                response.setNombre(rs.getString("nombres"));
-                response.setApellido(rs.getString("apellidos"));
-                response.setDniRuc(rs.getString("documento"));
+                response.setIdPaciente(rs.getInt("id_paciente")); // Generar un código como C12/P12
+                response.setNombresPaciente(rs.getString("nombres"));
+                response.setApellidosPaciente(rs.getString("apellidos"));
+                response.setDocumento(rs.getString("documento"));
                 response.setCorreo(rs.getString("correo"));
                 response.setTelefono(rs.getString("telefono"));
 

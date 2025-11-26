@@ -22,3 +22,27 @@ body{
     font-family: roboto;
 }
 
+/* --- AGREGAR ESTO EN TU ARCHIVO CSS GLOBAL O styles.jspf --- */
+
+/* Color de fondo del sidebar (Turquesa) */
+.bg-teal {
+    background-color: #008080 !important; 
+}
+
+/* Estilo para el enlace activo (el que tiene el fondo semitransparente) */
+.active-link {
+    background-color: rgba(255, 255, 255, 0.20); 
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Efecto Hover suave para los items que no están activos */
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+    border-radius: 5px;
+}
+
+/* Contenedor principal */
+#wrapper {
+    min-height: 100vh; 
+}

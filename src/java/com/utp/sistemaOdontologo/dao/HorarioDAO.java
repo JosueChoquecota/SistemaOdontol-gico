@@ -4,10 +4,14 @@
  */
 package com.utp.sistemaOdontologo.dao;
 
+import com.utp.sistemaOdontologo.connection.ConnectionDataBase;
+import com.utp.sistemaOdontologo.entities.Horario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HorarioDAO {
     public String findHoraLegibleById(Connection con, Integer idHorario) throws SQLException {
@@ -25,5 +29,34 @@ public class HorarioDAO {
             }
         }
         return horaLegible;
+    }
+    // NUEVO MÉTODO: Listar todos los horarios para el dropdown
+    public List<Horario> findAll() {
+        List<Horario> lista = new ArrayList<>();
+        ConnectionDataBase db = new ConnectionDataBase();
+        Connection con = null;
+        
+        String sql = "SELECT id_horario, horario_inicio, horario_fin FROM Horarios ORDER BY horario_inicio ASC";
+        
+        try {
+            con = db.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()) {
+                Horario h = new Horario();
+                h.setIdHorario(rs.getInt("id_horario"));
+                // Convertimos java.sql.Time a java.time.LocalTime
+                h.setHorarioInicio(rs.getTime("horario_inicio").toLocalTime());
+                h.setHorarioFin(rs.getTime("horario_fin").toLocalTime());
+                lista.add(h);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al listar horarios: " + e.getMessage());
+        } finally {
+            // Cerrar conexión si es necesario o dejar que el pool lo maneje
+             try { if (con != null) con.close(); } catch (SQLException ex) { }
+        }
+        return lista;
     }
 }

@@ -36,7 +36,7 @@ public class LoginController extends HttpServlet {
 
             // Redirigir al dashboard (ejemplo: index.jsp o dashboard.jsp)
             // Usamos sendRedirect para que el navegador haga una nueva petición (limpia la URL POST)
-            response.sendRedirect(request.getContextPath() + "/dashboard.jsp"); 
+            response.sendRedirect(request.getContextPath() + "/Tablero.jsp"); 
         } else {
             // 2. FALLO: Establecer mensaje de error y regresar a la vista de login
 
