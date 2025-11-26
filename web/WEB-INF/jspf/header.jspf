@@ -1,33 +1,55 @@
-
-<header>
+<%@ page pageEncoding="UTF-8" %>
+<header class="header">
     
-    <div class="top-bar">
-        <div class="contacto">
-            <span class="cont-phone"><i class="fa-solid fa-phone"></i>(01) 2253025</span>
-            <span><i class="fa-brands fa-whatsapp"></i> 981 - 124 - 146</span>
+    <%-- BARRA SUPERIOR DE CONTACTO --%>
+    <div class="top-bar" style="background-color: #f8f9fa; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 0.9rem;">
+        <div class="container d-flex justify-content-end gap-4 px-4">
+            <span class="cont-phone text-muted">
+                <i class="fa-solid fa-phone me-1 text-success"></i> (01) 2253025
+            </span>
+            <span class="text-muted">
+                <i class="fa-brands fa-whatsapp me-1 text-success"></i> 981 - 124 - 146
+            </span>
         </div>
     </div>
     
-    
-    <div class="logo">
-        <img src="RESOURCES/imgs/Logo.png" alt="alt"/>
-        <h1 >Multident</h1>
-    </div>
+    <%-- NAVEGACIÓN PRINCIPAL --%>
+    <div class="container d-flex justify-content-between align-items-center py-3 px-4">
+        
+        <%-- LOGO --%>
+        <div class="logo d-flex align-items-center gap-2">
+            <img src="RESOURCES/imgs/Logo.png" alt="Multident Logo" style="height: 40px;">
+            <h1 class="m-0 fs-3 fw-bold text-dark">Multident</h1>
+        </div>
 
-    <button class="menu-hmb">Menu</button>
+        <%-- MENÚ HAMBURGUESA (MÓVIL) --%>
+        <button class="menu-hmb d-md-none border-0 bg-transparent fs-3">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-    <div>
-        <nav class="naveg">
-            <ul class="nav-list">
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#nosotros">Nosotros</a></li>
-                <li><a href="#servicios">Servicios</a></li>
-                <li><a href="#cita">Cita</a></li>
-                <li><a href="#sede">Sede</a></li>
+        <%-- MENÚ DE NAVEGACIÓN --%>
+        <nav class="naveg d-none d-md-block">
+            <ul class="nav-list d-flex list-unstyled gap-4 m-0 align-items-center">
+                <li><a href="index.jsp#inicio" class="text-decoration-none text-dark fw-semibold">Inicio</a></li>
+                <li><a href="index.jsp#nosotros" class="text-decoration-none text-dark fw-semibold">Nosotros</a></li>
+                <li><a href="index.jsp#servicios" class="text-decoration-none text-dark fw-semibold">Servicios</a></li>
+                
+                <%-- ENLACE CORREGIDO AL SERVLET DE CITAS --%>
+                <li>
+                    <a href="citas?operacion=vista_reserva" class="text-decoration-none text-dark fw-semibold">
+                        Cita
+                    </a>
+                </li>
+                
+                <li><a href="index.jsp#sede" class="text-decoration-none text-dark fw-semibold">Sede</a></li>
             </ul>
         </nav>
+
+        <%-- BOTÓN CONTACTO --%>
+        <a href="login.jsp" class="button d-none d-md-block text-decoration-none text-white px-4 py-2 rounded-pill fw-bold" 
+           style="background-color: #00bfa5;">
+            Intranet
+        </a>
+        
     </div>
-
-    <button type="submit" class="button">Contacto</button>
-
 </header>

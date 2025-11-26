@@ -207,11 +207,10 @@
                                 <label class="form-label small fw-bold">Tipo Documento</label>
                                 <%-- AGREGADO id="selectTipoDocumento" para el Script --%>
                                 <select name="idTipoDocumento" id="selectTipoDocumento" class="form-select" required>
-                                    <option value="1">DNI</option>
-                                    <option value="2">Cédula de Ciudadanía</option>
-                                    <option value="3">Pasaporte</option>
-                                    <option value="4">Carné de Extranjería</option>
-                                    <option value="5">RUC</option>
+                                    <option value="1" ${trabajadorEditar.idTipoDocumento == 1 ? 'selected' : ''}>DNI</option>
+                                    <option value="2" ${trabajadorEditar.idTipoDocumento == 2 ? 'selected' : ''}>Cédula de Ciudadanía</option>
+                                    <option value="3" ${trabajadorEditar.idTipoDocumento == 3 ? 'selected' : ''}>Pasaporte</option>
+                                    <option value="5" ${trabajadorEditar.idTipoDocumento == 5 ? 'selected' : ''}>RUC</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -240,10 +239,11 @@
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Rol</label>
                                 <select name="idRol" class="form-select" required>
-                                    <option value="1">Odontólogo</option>
-                                    <option value="2">Asistente</option>
-                                    <option value="3">Recepcionista</option>
-                                    <option value="4">Administrador</option>
+                                    <%-- Comparamos el valor (1, 2, 3...) con el que viene de la BD --%>
+                                    <option value="1" ${trabajadorEditar.rol == 'ODONTOLOGO' ? 'selected' : ''}>Odontólogo</option>
+                                    <option value="2" ${trabajadorEditar.rol == 'ASISTENTE' ? 'selected' : ''}>Asistente</option>
+                                    <option value="3" ${trabajadorEditar.rol == 'RECEPCIONISTA' ? 'selected' : ''}>Recepcionista</option>
+                                    <option value="4" ${trabajadorEditar.rol == 'ADMINISTRADOR' ? 'selected' : ''}>Administrador</option>
                                 </select>
                             </div>
 

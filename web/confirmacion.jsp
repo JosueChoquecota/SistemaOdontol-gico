@@ -1,34 +1,33 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Cita Registrada</title>
-    <%@ include file="/WEB-INF/jspf/styles.jspf" %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cita Registrada - Multident</title>
+    
+    <%-- ESTILOS GLOBALES --%>
+    <%@ include file="/WEB-INF/jspf/styles.jspf" %> 
     
     <style>
-        /* CSS Mínimo y necesario para la apariencia del diseño de la imagen */
         body {
-            /* Eliminamos background-color #3b9f9e de aquí */
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: Arial, sans-serif;
-            margin: 0; /* Asegura que no haya márgenes por defecto */
-            overflow: hidden; /* Evita barras de desplazamiento si la imagen es muy grande */
-
-            /* Establecer la imagen de fondo */
-            background-image: url('RESOURCES/imgs/img2.png');
-            background-size: cover; /* Cubrir toda la ventana */
-            background-position: center center; /* Centrar la imagen */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* IMAGEN DE FONDO */
+            background-image: url('RESOURCES/imgs/img2.png'); /* Asegúrate que la ruta sea correcta */
+            background-size: cover;
+            background-position: center;
             background-repeat: no-repeat;
-            background-attachment: fixed; /* Opcional: fija la imagen al desplazarse */
-            position: relative; /* Necesario para el overlay */
-            z-index: 0; /* Asegura que el body tenga un z-index base */
+            position: relative;
         }
 
-        /* Overlay blanqueado sobre la imagen de fondo */
+        /* Overlay blanco semitransparente para que el texto sea legible */
         body::before {
             content: "";
             position: absolute;
@@ -36,73 +35,112 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); /* Blanco con 70% de opacidad */
-            z-index: 1; /* Por encima de la imagen de fondo, pero debajo del contenido */
+            background-color: rgba(255, 255, 255, 0.85); /* Blanco al 85% */
+            z-index: 1;
         }
 
+        /* Tarjeta Central */
+        .card-confirmacion {
+            position: relative;
+            z-index: 2; /* Encima del overlay */
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Sombra suave */
+            width: 90%;
+            max-width: 420px;
+            padding: 40px 30px;
+            text-align: center;
+            border: none; /* Sin borde gris de bootstrap */
+        }
+
+        /* Círculo del Check */
         .check-circle {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background-color: #26a69a; /* Color Teal/Aguamarina del check */
+            background-color: #20c997; /* Tu color Teal */
             color: white;
-            font-size: 50px;
-            font-weight: bold;
-            line-height: 90px;
-            margin: 0 auto 15px;
-            /* Aseguramos que el círculo esté sobre el overlay */
-            position: relative; 
-            z-index: 3; /* Más alto que el overlay */
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px; /* Centrado y margen abajo */
+            box-shadow: 0 4px 10px rgba(32, 201, 151, 0.3); /* Sombra verde suave */
         }
-        .card-custom {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            position: relative; /* Para que la tarjeta esté sobre el overlay */
-            z-index: 2; /* Por encima del overlay, pero debajo del check-circle si lo necesitas superpuesto */
+
+        /* Títulos y Textos */
+        h2 {
+            color: #333;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
         }
-        .sub-message {
-            font-size: 11px;
-            color: #777;
-            margin-top: 5px;
+
+        p.mensaje {
+            color: #666;
+            font-size: 0.95rem;
             margin-bottom: 5px;
+            line-height: 1.5;
+        }
+
+        hr.divider {
+            margin: 25px auto;
+            width: 60%;
+            border: 0;
+            border-top: 1px solid #eee;
+        }
+
+        /* Botón personalizado */
+        .btn-continuar {
+            background-color: #20c997;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 0;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-continuar:hover {
+            background-color: #1aa179;
+            color: white;
+            transform: translateY(-2px); /* Efecto de elevación */
+            box-shadow: 0 4px 12px rgba(32, 201, 151, 0.2);
         }
     </style>
 </head>
 <body>
-    <%-- Asumimos que el CitaController pasó el DTO de respuesta en el atributo "res" --%>
-    <c:set var="cita" value="${requestScope.res}"/>
-    
-    <div class="card card-custom" style="max-width: 400px;">
-        <div class="card-body p-5 text-center">
-            
-            <div class="check-circle rounded-circle text-white d-flex align-items-center justify-content-center">
-                &#10003;
-            </div>
-            
-            <h2 class="h4 fw-bold mt-3 mb-4">Se ha registrado tu cita!</h2>
-            
-            <hr class="my-3 mx-auto" style="width: 50%;">
-            
-            <p class="sub-message">
-                "Su cita se ha quedado planeado"
-            </p>
-            <p class="sub-message">
-                La información se guardó correctamente.
-            </p>
-          
-            <hr class="my-4">
-            
-            
-            <a href="citas?operacion=listar_citas" class="btn btn-primary mt-4 w-100">
-                Ver Citas Agendadas
-            </a>
-            
+
+    <div class="card-confirmacion">
+        <!-- Icono Check -->
+        <div class="check-circle">
+            <i class="bi bi-check-lg"></i>
         </div>
+
+        <!-- Título -->
+        <h2>¡Cita Registrada!</h2>
+
+        <!-- Mensajes -->
+        <p class="mensaje">Su cita ha quedado agendada correctamente.</p>
+        <p class="mensaje text-muted small">Hemos enviado los detalles a su correo electrónico.</p>
+
+        <!-- Línea divisora -->
+        <hr class="divider">
+
+        <!-- Botón de Acción -->
+        <%-- 
+           Si es un paciente (público), probablemente quieras que vuelva al inicio (index.jsp).
+           Si es un admin, quizás quieras que vuelva a la lista de citas.
+           Aquí asumo que es flujo público por el diseño.
+        --%>
+        <a href="index.jsp" class="btn-continuar">
+            Volver al Inicio
+        </a>
     </div>
-    
-    <%-- EL DIV DE LA IMAGEN YA NO ES NECESARIO AQUÍ --%>
-    <%-- <div class="imagen">
-        <img src="RESOURCES/imgs/img2.png"/>
-    </div> --%>
 
 </body>
 </html>

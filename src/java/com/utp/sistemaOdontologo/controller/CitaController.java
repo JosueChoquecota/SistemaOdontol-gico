@@ -45,6 +45,7 @@ public class CitaController extends HttpServlet {
                 
                 case "buscar_id": buscarPorId(request, response); break;
                 case "listar_citas": listarCitas(request, response); break;
+                case "vista_reserva": mostrarFormularioReserva(request, response); break;
                 
                 // CASO CLAVE PARA CALENDARIO
                 case "obtener_citas_json": obtenerCitasJson(request, response); break; 
@@ -77,6 +78,25 @@ public class CitaController extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("error", "Error al cargar datos: " + e.getMessage());
             request.getRequestDispatcher("Citas.jsp").forward(request, response);
+        }
+    }
+    private void mostrarFormularioReserva(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            // 1. Cargar la lista de Horarios Disponibles
+            request.setAttribute("listaHorarios", horarioDAO.findAll());
+            
+            // 2. Cargar la lista de Doctores (Odontólogos)
+            request.setAttribute("listaOdontologos", trabajadorService.findAll());
+            
+            // 3. Redirigir al JSP del formulario (Asegúrate del nombre correcto del archivo)
+            // Supongamos que tu archivo se llama "reserva.jsp" o está en una carpeta
+            request.getRequestDispatcher("/Formulario.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "No se pudo cargar el formulario.");
+            // Redirige a error o index
         }
     }
     // =========================================================
@@ -156,47 +176,91 @@ public class CitaController extends HttpServlet {
     // =================================================================
     // REGISTRAR
     // =================================================================
-    private void registrarCita(HttpServletRequest request, HttpServletResponse response)
+    private void registrarCita(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
         CitaDTORequest dto = new CitaDTORequest();
-
+        
         try {
-            // 1. IDs seleccionados en los Dropdowns
-            dto.setIdPaciente(Integer.parseInt(request.getParameter("idPaciente")));
-            dto.setIdTrabajador(Integer.parseInt(request.getParameter("idOdontologo")));
-            
-            // CORRECCIÓN CRÍTICA: Leemos el ID del Horario, NO la hora texto
-            dto.setIdHorario(Integer.parseInt(request.getParameter("idHorario")));
+            // ==================================================================
+            // 1. LOGICA HÍBRIDA: ¿PACIENTE NUEVO O EXISTENTE?
+            // ==================================================================
+            String idPacienteParam = request.getParameter("idPaciente");
 
-            // 2. Fecha
+            if (idPacienteParam != null && !idPacienteParam.isEmpty()) {
+                // CASO A: Viene del Panel Administrativo (Seleccionó un paciente existente)
+                dto.setIdPaciente(Integer.parseInt(idPacienteParam));
+            } else {
+                // CASO B: Viene del Formulario Público (Es un paciente nuevo)
+                dto.setIdPaciente(0); // Marcamos con 0 para que el servicio sepa que debe crearlo
+                
+                // Capturamos los datos personales del formulario
+                dto.setNombresPaciente(request.getParameter("nombresPaciente"));
+                dto.setApellidosPaciente(request.getParameter("apellidosPaciente"));
+                dto.setDocumento(request.getParameter("documento"));
+                dto.setTelefono(request.getParameter("telefono"));
+                dto.setCorreo(request.getParameter("correo"));
+                dto.setTipoContacto("EMAIL"); 
+                dto.setIdTipoDocumento(1); // Valor por defecto (DNI)
+            }
+
+            // ==================================================================
+            // 2. DATOS COMUNES DE LA CITA
+            // ==================================================================
+            dto.setIdTrabajador(Integer.parseInt(request.getParameter("idOdontologo")));
+            dto.setIdHorario(Integer.parseInt(request.getParameter("idHorario")));
             dto.setFechaCita(LocalDate.parse(request.getParameter("fechaCita")));
-            
-            // 3. Motivo y Observaciones
             dto.setMotivo(request.getParameter("motivo"));
-            dto.setObservaciones(request.getParameter("observaciones"));
+            dto.setMetodoPago(request.getParameter("metodoPago")); // Puede venir null si es admin
             
-            // 4. Estado Inicial
+            // Observaciones es opcional, validamos null para evitar errores en BD si no lo maneja
+            String obs = request.getParameter("observaciones");
+            dto.setObservaciones(obs != null ? obs : ""); 
+            
             dto.setEstado("PENDIENTE");
 
-            // 5. Llamada al Servicio
-            boolean resultado = citaService.insertarCitaAdministrativa(dto);
-
-            if (resultado) {
-                request.setAttribute("mensaje", "✅ Cita registrada correctamente.");
+            // ==================================================================
+            // 3. LLAMADA AL SERVICIO
+            // ==================================================================
+            boolean exito = false;
+            
+            if (dto.getIdPaciente() == 0) {
+                // Flujo Público: El servicio 'crearCita' crea Paciente + Cita
+                CitaDTOResponse res = citaService.crearCita(dto);
+                exito = (res.getIdCita() != null);
             } else {
-                request.setAttribute("error", "❌ No se pudo registrar la cita. Verifique disponibilidad.");
+                // Flujo Admin: El servicio 'insertarCitaAdministrativa' solo crea Cita
+                exito = citaService.insertarCitaAdministrativa(dto);
+            }
+
+            // ==================================================================
+            // 4. RESPUESTA Y REDIRECCIÓN
+            // ==================================================================
+            if (exito) {
+                request.setAttribute("mensaje", "✅ Cita registrada correctamente.");
+                
+                // Si vino del formulario público, redirigimos a la confirmación o limpiamos
+                if (idPacienteParam == null) { 
+                     request.getRequestDispatcher("/confirmacion.jsp").forward(request, response);
+                     return; // Importante para no ejecutar el listarCitas de abajo
+                }
+            } else {
+                request.setAttribute("error", "❌ No se pudo registrar. Verifique disponibilidad.");
+                if (idPacienteParam == null) {
+                     request.getRequestDispatcher("/Formulario.jsp").forward(request, response);
+                     return;
+                }
             }
 
         } catch (NumberFormatException e) {
-            e.printStackTrace(); // Ver error en consola del servidor
-            request.setAttribute("error", "Error de formato: Faltan datos numéricos (Paciente, Doctor u Horario).");
+            e.printStackTrace();
+            request.setAttribute("error", "Error de formato: Faltan datos numéricos.");
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Error en el sistema: " + e.getMessage());
         }
-
-        // Recargamos la lista
+        
+        // Por defecto (si es admin), volvemos a la lista
         listarCitas(request, response);
     }
 

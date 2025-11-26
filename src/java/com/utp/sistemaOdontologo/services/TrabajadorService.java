@@ -156,25 +156,24 @@ public class TrabajadorService {
 
     private final TrabajadorMapper mapper = new TrabajadorMapper(); // Instancia del Mapper para usar sus métodos
 
-    public TrabajadorDTOResponse findById(Integer idTrabajador) {
+    public TrabajadorDTOResponse findById(Integer id) {
         Connection con = null;
+        TrabajadorDTOResponse dto = null;
         try {
-            // 1. CONEXIÓN (se cierra automáticamente al salir del try-with-resources si lo usas)
             con = dbConnection.getConnection();
+            // Llamamos al DAO
+            Trabajador trabajador = trabajadorDAO.findById(con, id);
 
-            // 2. BÚSQUEDA: El DAO usa JOINs para obtener la Entidad completa
-            Trabajador entidad = trabajadorDAO.findById(con, idTrabajador); 
-
-            // 3. MAPEO: El Servicio convierte la Entidad a DTO de Respuesta
-            if (entidad != null) {
-                return TrabajadorMapper.toResponseDTO(entidad);
+            // Convertimos a DTO (Asegúrate de tener este método en tu Mapper)
+            if (trabajador != null) {
+                dto = TrabajadorMapper.toResponseDTO(trabajador);
             }
         } catch (Exception e) {
-            System.err.println("Error al buscar trabajador por ID: " + e.getMessage());
+            e.printStackTrace();
         } finally {
-            try { if (con != null) con.close(); } catch (SQLException ex) { /* log close error */ }
+            try { if (con != null) con.close(); } catch (SQLException ex) {}
         }
-        return null;
+        return dto;
     }
 
     public List<TrabajadorDTOResponse> findAll() {
